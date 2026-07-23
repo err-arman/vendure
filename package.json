@@ -1,0 +1,22 @@
+{
+  "name": "my-shop",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n server,storefront -c blue,magenta \"bun run --filter server dev\" \"bun run --filter storefront dev\"",
+    "dev:server": "bun run --filter server dev",
+    "dev:storefront": "bun run --filter storefront dev",
+    "build": "bun run --filter server build && bun run --filter storefront build",
+    "build:server": "bun run --filter server build",
+    "build:storefront": "bun run --filter storefront build",
+    "start": "concurrently -n server,storefront -c blue,magenta \"bun run --filter server start\" \"bun run --filter storefront start\"",
+    "start:server": "bun run --filter server start",
+    "start:storefront": "bun run --filter storefront start"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  },
+  "workspaces": [
+    "apps/*"
+  ]
+}
