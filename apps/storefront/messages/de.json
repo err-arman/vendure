@@ -425,7 +425,7 @@
     "popularCollections": "Beliebte Kategorien"
   },
   "Footer": {
-    "description": "Ein moderner, Headless-E-Commerce-Shop, erstellt mit Vendure und Next.js. Schnell, flexibel und produktionsbereit.",
+    "description": "Ein moderner, Headless-E-Commerce-Shop, erstellt mit The Coffee Store und Next.js. Schnell, flexibel und produktionsbereit.",
     "categories": "Kategorien",
     "customer": "Kunde",
     "shopAll": "Alle Produkte",
@@ -435,7 +435,7 @@
     "github": "GitHub",
     "documentation": "Dokumentation",
     "sourceCode": "Quellcode",
-    "copyright": "Vendure Store. Alle Rechte vorbehalten.",
+    "copyright": "The Coffee Store. Alle Rechte vorbehalten.",
     "poweredBy": "Powered by"
   },
   "Common": {

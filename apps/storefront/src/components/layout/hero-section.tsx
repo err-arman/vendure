@@ -1,40 +1,102 @@
-import {Button} from "@/components/ui/button";
-import { Link } from '@/i18n/navigation';
-import {getTranslations} from 'next-intl/server';
 import {getRouteLocale} from '@/i18n/server';
 
 export async function HeroSection() {
     const locale = await getRouteLocale();
-    const t = await getTranslations({locale, namespace: 'Hero'});
     return (
-        <section className="relative overflow-hidden bg-gradient-to-br from-background via-muted/50 to-muted">
-            {/* Subtle decorative grid pattern */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--color-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-border)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-30" />
-            {/* Radial fade overlay */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,var(--color-primary)/8,transparent)]" />
+        <section className="relative w-full h-[57vh] lg:h-[86vh] overflow-hidden mt-16">
+            {/* Background image */}
+            <img
+                src="/images/hero-section.jpg"
+                alt="Coffee shop background"
+                className="absolute inset-0 w-full h-full object-cover"
+            />
 
-            <div className="container relative mx-auto px-4 py-28 md:py-40 lg:py-48">
-                <div className="max-w-4xl mx-auto text-center space-y-8">
-                    <h1
-                        className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight animate-in fade-in slide-in-from-top-4 duration-700 fill-mode-backwards"
-                    >
-                        {t('title')}{" "}
-                        <span className="text-primary">{t('titleHighlight')}</span>
-                    </h1>
-                    <p
-                        className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-backwards"
-                    >
-                        {t('subtitle')}
-                    </p>
-                    <div
-                        className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-backwards"
-                    >
-                        <Button render={<Link href="#products" />} nativeButton={false} size="lg" className="min-w-[200px] text-base">
-                            {t('shopNow')}
-                        </Button>
-                        <Button render={<Link href="#products" />} nativeButton={false} variant="outline" size="lg" className="min-w-[200px] text-base">
-                            {t('viewCollections')}
-                        </Button>
+            {/* Overlay for slight dimming */}
+            <div className="absolute inset-0 bg-black/20" />
+
+            {/* Curved text + circular logo */}
+            <div className="relative z-10 flex flex-col items-end justify-center min-h-screen px-6">
+                <div className="absolute flex items-center justify-center">
+                    <div className="relative w-72 h-72 md:w-72 md:h-72 lg:w-[470px] lg:h-[470px] mr-6 md:mr-20 lg:mr-[420px] mb-96 lg:mb-60">
+                        <div className="absolute inset-0 bg-gradient-to-b from-indigo-900/80 to-indigo-900/80 rounded-full border-indigo-500 shadow-2xl flex flex-col items-center justify-center">
+                            <img
+                                src="/butterfly.png"
+                                alt="The Coffee Store"
+                                className="w-32 h-28 lg:w-48 lg:h-44 object-contain"
+                            />
+                        </div>
+
+                        <svg
+                            width="100%"
+                            height="100%"
+                            viewBox="0 0 300 300"
+                            className="absolute inset-0 overflow-visible"
+                            suppressHydrationWarning
+                        >
+                            {(() => {
+                                const text = "THE COFFEE STORE";
+                                const characters = text.split("");
+                                const radius = 167;
+                                const letterSpacing = 30;
+                                const curveFactor = 1.0;
+                                const fontSize = 38;
+                                const strokeColor = "#7b4b00";
+                                const strokeWidth = 4;
+                                const fillColor = "#ffffff";
+                                const strokeOffsetX = 2;
+                                const strokeOffsetY = 2;
+
+                                const totalAngle =
+                                    (characters.length - 1) *
+                                    (letterSpacing / radius) *
+                                    curveFactor;
+                                const startAngle = -totalAngle / 2;
+
+                                return characters.map((char, i) => {
+                                    const angle =
+                                        startAngle + i * (letterSpacing / radius) * curveFactor;
+                                    const x = 150 + radius * Math.sin(angle);
+                                    const y = 150 - radius * Math.cos(angle);
+                                    const rotate = (angle * 180) / Math.PI;
+
+                                    return (
+                                        <g
+                                            key={i}
+                                            transform={`translate(${x},${y}) rotate(${rotate})`}
+                                            textAnchor="middle"
+                                            dominantBaseline="middle"
+                                            suppressHydrationWarning
+                                        >
+                                            <text
+                                                x={strokeOffsetX}
+                                                y={strokeOffsetY}
+                                                style={{
+                                                    fontFamily: "Impact, sans-serif",
+                                                    fontSize,
+                                                    fontWeight: "bold",
+                                                    stroke: strokeColor,
+                                                    strokeWidth,
+                                                    fill: "none",
+                                                }}
+                                            >
+                                                {char}
+                                            </text>
+                                            <text
+                                                style={{
+                                                    fontFamily: "Impact, sans-serif",
+                                                    fontSize,
+                                                    fontWeight: "bold",
+                                                    fill: fillColor,
+                                                }}
+                                                suppressHydrationWarning
+                                            >
+                                                {char}
+                                            </text>
+                                        </g>
+                                    );
+                                });
+                            })()}
+                        </svg>
                     </div>
                 </div>
             </div>

@@ -140,7 +140,7 @@ export async function Footer() {
                             rel="noopener noreferrer"
                             className="hover:text-foreground transition-colors"
                         >
-                            <Image src="/vendure.svg" alt="Vendure" width={40} height={27} className="h-4 w-auto dark:invert" />
+                            <Image src="/butterfly.png" alt="The Coffee Store" width={40} height={27} className="h-4 w-auto" />
                         </a>
                         <span>&</span>
                         <a
