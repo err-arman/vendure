@@ -35,7 +35,7 @@ export async function Footer() {
     return (
         <footer className="border-t border-border mt-auto">
             <div className="container mx-auto px-4 py-12">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     <div className="md:col-span-1">
                         <NavigationLink href="/" className="inline-block mb-4">
                             <Image src="/vendure.svg" alt="Vendure" width={40} height={27} className="h-6 w-auto dark:invert" />
@@ -126,11 +126,11 @@ export async function Footer() {
                             </li>
                         </ul>
                     </div>
-                </div>
+                </div> */}
 
                 {/* Bottom Section */}
                 <div
-                    className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
+                    className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
                     <Copyright/>
                     <div className="flex items-center gap-2">
                         <span>{t('poweredBy')}</span>

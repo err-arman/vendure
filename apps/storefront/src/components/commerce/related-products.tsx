@@ -3,35 +3,49 @@ import { getRouteLocale } from "@/i18n/server";
 import { cacheLife, cacheTag } from "next/cache";
 import {getActiveCurrencyCode} from '@/lib/currency-server';
 import { query } from "@/lib/vendure/api";
-import { GetCollectionProductsQuery } from "@/lib/vendure/queries";
+import { GetCollectionProductsQuery, SearchProductsQuery } from "@/lib/vendure/queries";
 import { readFragment } from "@/graphql";
 import { ProductCardFragment } from "@/lib/vendure/fragments";
 import {getTranslations} from 'next-intl/server';
+import {buildSearchInput} from "@/lib/search-helpers";
 
 interface RelatedProductsProps {
-    collectionSlug: string;
+    collectionSlug?: string;
     currentProductId: string;
 }
 
-async function getRelatedProducts(collectionSlug: string, currentProductId: string, currencyCode: string) {
+async function getRelatedProducts(collectionSlug: string | undefined, currentProductId: string, currencyCode: string) {
     'use cache'
     cacheLife('hours')
 
     const locale = await getRouteLocale();
-    cacheTag(`related-products-${collectionSlug}-${locale}-${currencyCode}`);
+    cacheTag(`related-products-${collectionSlug ?? 'all'}-${locale}-${currencyCode}`);
     cacheTag('products');
 
-    const result = await query(GetCollectionProductsQuery, {
-        slug: collectionSlug,
-        input: {
-            collectionSlug: collectionSlug,
-            take: 13, // Fetch extra to account for filtering out current product
-            skip: 0,
-            groupByProduct: true
-        }
+    if (collectionSlug) {
+        const result = await query(GetCollectionProductsQuery, {
+            slug: collectionSlug,
+            input: {
+                collectionSlug: collectionSlug,
+                take: 13,
+                skip: 0,
+                groupByProduct: true
+            }
+        }, {languageCode: locale, currencyCode});
+
+        return result.data.search.items
+            .filter(item => {
+                const product = readFragment(ProductCardFragment, item);
+                return product.productId !== currentProductId;
+            })
+            .slice(0, 12);
+    }
+
+    // Fallback: fetch all products
+    const result = await query(SearchProductsQuery, {
+        input: buildSearchInput({searchParams: {}})
     }, {languageCode: locale, currencyCode});
 
-    // Filter out the current product and limit to 12
     return result.data.search.items
         .filter(item => {
             const product = readFragment(ProductCardFragment, item);

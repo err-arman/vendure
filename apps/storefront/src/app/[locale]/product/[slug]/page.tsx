@@ -157,7 +157,7 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
             </div>
 
             {/* Shipping & Trust Badges */}
-            <section className="py-8 mt-8 border-y border-border/50">
+            {/* <section className="py-8 mt-8 border-y border-border/50">
                 <div className="container mx-auto px-4">
                     <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8">
                         <div className="inline-flex items-center gap-2 rounded-full bg-muted/60 px-4 py-2 text-sm font-medium text-muted-foreground">
@@ -178,10 +178,10 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> */}
 
             {/* Store FAQ Section */}
-            <section className="py-16 bg-muted/30">
+            {/* <section className="py-16 bg-muted/30">
                 <div className="container mx-auto px-4 max-w-2xl">
                     <h2 className="text-2xl font-bold text-center mb-8">{t('faq.title')}</h2>
                     <Accordion className="w-full">
@@ -211,14 +211,12 @@ export default async function ProductDetailPage({params, searchParams}: PageProp
                         </AccordionItem>
                     </Accordion>
                 </div>
-            </section>
+            </section> */}
 
-            {primaryCollection && (
-                <RelatedProducts
-                    collectionSlug={primaryCollection.slug}
-                    currentProductId={product.id}
-                />
-            )}
+            <RelatedProducts
+                collectionSlug={primaryCollection?.slug}
+                currentProductId={product.id}
+            />
         </>
     );
 }

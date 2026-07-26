@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 1026",
+    "dev": "next dev --port 2121",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

@@ -36,9 +36,9 @@ export function Navbar() {
                                 <SearchInput/>
                             </Suspense>
                         </div>
-                        <Suspense>
+                        {/* <Suspense>
                             <LanguagePicker />
-                        </Suspense>
+                        </Suspense> */}
                         <Suspense>
                             <CurrencyPickerWrapper />
                         </Suspense>

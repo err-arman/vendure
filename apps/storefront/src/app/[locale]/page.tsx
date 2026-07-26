@@ -1,12 +1,16 @@
 import type {Metadata} from "next";
 import {Suspense} from "react";
 import {getRouteLocale} from "@/i18n/server";
+import {getActiveCurrencyCode} from '@/lib/currency-server';
 import {HeroSection} from "@/components/layout/hero-section";
-import {FeaturedProducts} from "@/components/commerce/featured-products";
+import {ProductGrid} from "@/components/commerce/product-grid";
+import {ProductGridSkeleton} from "@/components/shared/product-grid-skeleton";
 import {SITE_NAME, SITE_URL, buildCanonicalUrl} from "@/lib/metadata";
-import {BadgeCheck, Tag, Zap} from "lucide-react";
 import {getTranslations} from 'next-intl/server';
 import {toOgLocale} from '@/i18n/locale-utils';
+import {query} from "@/lib/vendure/api";
+import {SearchProductsQuery} from "@/lib/vendure/queries";
+import {buildSearchInput} from "@/lib/search-helpers";
 
 export async function generateMetadata(): Promise<Metadata> {
     const locale = await getRouteLocale();
@@ -31,44 +35,29 @@ export async function generateMetadata(): Promise<Metadata> {
     };
 }
 
-const featureKeys = [
-    {icon: BadgeCheck, key: 'highQuality'},
-    {icon: Tag, key: 'bestPrices'},
-    {icon: Zap, key: 'fastDelivery'},
-] as const;
+async function HomeProducts() {
+    const locale = await getRouteLocale();
+    const currencyCode = await getActiveCurrencyCode();
+    const take = 12;
+
+    const productDataPromise = query(SearchProductsQuery, {
+        input: buildSearchInput({searchParams: {}})
+    }, {languageCode: locale, currencyCode});
+
+    return (
+        <section id="products" className="container mx-auto px-4 py-12 md:py-16">
+            <ProductGrid productDataPromise={productDataPromise} currentPage={1} take={take}/>
+        </section>
+    );
+}
 
 export default async function Home() {
-    const locale = await getRouteLocale();
-    const t = await getTranslations({locale, namespace: 'Home'});
-
     return (
         <div className="min-h-screen">
             <HeroSection/>
-            <Suspense>
-                <FeaturedProducts/>
+            <Suspense fallback={<ProductGridSkeleton/>}>
+                <HomeProducts/>
             </Suspense>
-
-            <section className="py-16 md:py-24 bg-muted/30">
-                <div className="container mx-auto px-4">
-                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-center mb-12">
-                        {t('whyShopWithUs')}
-                    </h2>
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {featureKeys.map((feature) => (
-                            <div
-                                key={feature.key}
-                                className="group relative text-center space-y-4 rounded-xl border border-transparent bg-card p-8 transition-all duration-300 hover:border-border hover:shadow-lg hover:-translate-y-1"
-                            >
-                                <div className="w-14 h-14 mx-auto bg-primary/10 rounded-full flex items-center justify-center transition-colors duration-300 group-hover:bg-primary/20">
-                                    <feature.icon className="size-6 text-primary" />
-                                </div>
-                                <h3 className="text-xl font-semibold">{t(`features.${feature.key}.title`)}</h3>
-                                <p className="text-muted-foreground leading-relaxed">{t(`features.${feature.key}.description`)}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
         </div>
     );
 }
