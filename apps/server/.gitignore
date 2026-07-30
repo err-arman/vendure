@@ -4,3 +4,24 @@ admin-ui
 static/assets
 static/email/test-emails
 .vendure/
+
+
+# Next.js build outputs (Includes .next/standalone)
+.next/
+out/
+build/
+dist/
+
+# Dependencies and logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env*.local
+.env
+
+# Ignore custom deploy/standalone build outputs
+apps/storefront/deploy/
+deploy/
