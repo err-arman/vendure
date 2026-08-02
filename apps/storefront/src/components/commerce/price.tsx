@@ -16,6 +16,8 @@ export function Price({value, currencyCode = 'USD'}: PriceProps) {
             {new Intl.NumberFormat(intlLocale, {
                 style: 'currency',
                 currency: currencyCode,
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
             }).format(value / 100)}
         </>
     );

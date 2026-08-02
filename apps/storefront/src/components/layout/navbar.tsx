@@ -1,5 +1,5 @@
-import Image from "next/image";
 import {NavigationLink} from '@/components/shared/navigation-link';
+import {ThemeLogo} from '@/components/layout/navbar/theme-logo';
 import {NavbarCollections} from '@/components/layout/navbar/navbar-collections';
 import {NavbarCart} from '@/components/layout/navbar/navbar-cart';
 import {NavbarUser} from '@/components/layout/navbar/navbar-user';
@@ -22,7 +22,7 @@ export function Navbar() {
                             <MobileNavWrapper />
                         </Suspense>
                         <NavigationLink href="/" className="text-xl font-bold">
-                            <Image src="/butterfly.png" alt="The Coffee Store" width={80} height={60} className="h-12 w-auto" />
+                            <ThemeLogo />
                         </NavigationLink>
                         <nav className="hidden md:flex items-center gap-6">
                             <Suspense>

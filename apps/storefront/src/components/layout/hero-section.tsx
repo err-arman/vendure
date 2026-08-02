@@ -15,9 +15,9 @@ export async function HeroSection() {
             <div className="absolute inset-0 bg-black/20" />
 
             {/* Curved text + circular logo */}
-            <div className="relative z-10 flex flex-col items-end justify-center min-h-screen px-6">
-                <div className="absolute flex items-center justify-center">
-                    <div className="relative w-72 h-72 md:w-72 md:h-72 lg:w-[470px] lg:h-[470px] mr-6 md:mr-20 lg:mr-[420px] mb-96 lg:mb-60">
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6">
+                <div className="flex items-center justify-center">
+                    <div className="relative w-72 h-72 md:w-72 md:h-72 lg:w-[470px] lg:h-[470px]">
                         <div className="absolute inset-0 bg-gradient-to-b from-indigo-900/80 to-indigo-900/80 rounded-full border-indigo-500 shadow-2xl flex flex-col items-center justify-center">
                             <img
                                 src="/butterfly.png"
