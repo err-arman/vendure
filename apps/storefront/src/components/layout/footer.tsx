@@ -135,7 +135,7 @@ export async function Footer() {
                     <div className="flex items-center gap-2">
                         <span>{t('poweredBy')}</span>
                         <a
-                            href="https://vendure.io"
+                            href="#"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-foreground transition-colors"
@@ -144,7 +144,7 @@ export async function Footer() {
                         </a>
                         <span>&</span>
                         <a
-                            href="https://nextjs.org"
+                            href="#"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-foreground transition-colors"
