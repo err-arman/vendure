@@ -95,6 +95,18 @@ export const GetProductDetailQuery = graphql(`
     }
 `);
 
+export const GetProductVariantsQuery = graphql(`
+    query GetProductVariants($productId: ID!) {
+        product(id: $productId) {
+            id
+            variants {
+                id
+                name
+            }
+        }
+    }
+`);
+
 export const GetActiveOrderQuery = graphql(`
     query GetActiveOrder {
         activeOrder {

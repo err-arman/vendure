@@ -18,7 +18,7 @@ export function buildSearchInput({ searchParams, collectionSlug }: BuildSearchIn
     const take = 12;
     const skip = (page - 1) * take;
     const sort = (searchParams.sort as string) || 'name-asc';
-    const searchTerm = searchParams.q as string;
+    const searchTerm = (searchParams.q as string) || (searchParams.query as string);
 
     // Extract facet value IDs from search params
     const facetValueIds = searchParams.facets

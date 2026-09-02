@@ -36,10 +36,10 @@ bun run dev:storefront
 
 ### Access Points
 
-- **Vendure Dashboard**: http://localhost:3000/dashboard
-- **Shop GraphQL API**: http://localhost:3000/shop-api
-- **Admin GraphQL API**: http://localhost:3000/admin-api
-- **Storefront**: http://localhost:3001
+- **Vendure Dashboard**: http://localhost:2020/dashboard
+- **Shop GraphQL API**: http://localhost:2020/shop-api
+- **Admin GraphQL API**: http://localhost:2020/admin-api
+- **Storefront**: http://localhost:2121
 
 ### Admin Credentials
 

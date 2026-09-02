@@ -1,2 +1,4 @@
 schema:
-  - https://readonlydemo.vendure.io/shop-api
+  - http://localhost:2020/shop-api
+  headers:
+    vendure-token: test_east_bengal_token

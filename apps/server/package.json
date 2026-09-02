@@ -16,6 +16,7 @@
     "start": "vendure start all"
   },
   "dependencies": {
+    "@nestjs/common": "^11.0.12",
     "@vendure/asset-server-plugin": "3.7.1",
     "@vendure/core": "3.7.1",
     "@vendure/dashboard": "3.7.1",

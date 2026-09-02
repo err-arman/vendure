@@ -33,14 +33,7 @@ export async function ProductGrid({productDataPromise, currentPage, take}: Produ
 
     return (
         <div className="space-y-8">
-            {/* <div className="flex items-center justify-between">
-                <p className="text-sm text-muted-foreground">
-                    {t('productCount', {count: searchResult.totalItems})}
-                </p>
-                <SortDropdown/>
-            </div> */}
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
                 {searchResult.items.map((product, i) => (
                     <ProductCard key={'product-grid-item' + i} product={product}/>
                 ))}

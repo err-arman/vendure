@@ -1,6 +1,5 @@
 import {query} from './api';
 import {GetActiveCustomerQuery} from './queries';
-import {getActiveChannelCached} from './cached';
 import {cache} from "react";
 import {readFragment} from "@/graphql";
 import {ActiveCustomerFragment} from "@/lib/vendure/fragments";
@@ -14,5 +13,3 @@ export const getActiveCustomer = cache(async () => {
     });
     return readFragment(ActiveCustomerFragment, result.data.activeCustomer);
 })
-
-export const getActiveChannel = getActiveChannelCached;

@@ -23,7 +23,10 @@
       },
       {
         "name": "gql.tada/ts-plugin",
-        "schema": "https://readonlydemo.vendure.io/shop-api",
+        "schema": "http://localhost:2020/shop-api",
+        "headers": {
+          "vendure-token": "test_east_bengal_token"
+        },
         "tadaOutputLocation": "./src/graphql-env.d.ts"
       }
     ],

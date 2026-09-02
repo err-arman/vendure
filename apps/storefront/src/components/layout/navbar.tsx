@@ -1,59 +1,48 @@
-import {NavigationLink} from '@/components/shared/navigation-link';
-import {ThemeLogo} from '@/components/layout/navbar/theme-logo';
-import {NavbarCollections} from '@/components/layout/navbar/navbar-collections';
-import {NavbarCart} from '@/components/layout/navbar/navbar-cart';
-import {NavbarUser} from '@/components/layout/navbar/navbar-user';
-import {ThemeSwitcher} from '@/components/layout/navbar/theme-switcher';
-import {LanguagePicker} from '@/components/layout/navbar/language-picker';
-import {CurrencyPickerWrapper} from '@/components/layout/navbar/currency-picker-wrapper';
-import {MobileNavWrapper} from '@/components/layout/navbar/mobile-nav-wrapper';
-import {Suspense} from "react";
-import {SearchInput} from '@/components/layout/search-input';
-import {NavbarUserSkeleton} from '@/components/shared/skeletons/navbar-user-skeleton';
-import {SearchInputSkeleton} from '@/components/shared/skeletons/search-input-skeleton';
+import { NavigationLink } from "@/components/shared/navigation-link";
+import { ThemeLogo } from "@/components/layout/navbar/theme-logo";
+import { NavbarCart } from "@/components/layout/navbar/navbar-cart";
+import { NavbarUser } from "@/components/layout/navbar/navbar-user";
+import { ThemeSwitcher } from "@/components/layout/navbar/theme-switcher";
+import { CurrencyPickerWrapper } from "@/components/layout/navbar/currency-picker-wrapper";
+import { MobileNavWrapper } from "@/components/layout/navbar/mobile-nav-wrapper";
+import { NavbarShell } from "@/components/layout/navbar/navbar-shell";
+import { Suspense } from "react";
+import { NavbarUserSkeleton } from "@/components/shared/skeletons/navbar-user-skeleton";
 
 export function Navbar() {
-    return (
-        <header className="fixed top-0 left-0 right-0 z-50 border-b backdrop-blur-md bg-background/80">
-            <div className="container mx-auto px-4">
-                <div className="flex items-center justify-between h-16">
-                    <div className="flex items-center gap-8">
-                        <Suspense>
-                            <MobileNavWrapper />
-                        </Suspense>
-                        <NavigationLink href="/" className="text-xl font-bold">
-                            <ThemeLogo />
-                        </NavigationLink>
-                        <nav className="hidden md:flex items-center gap-6">
-                            <Suspense>
-                                <NavbarCollections/>
-                            </Suspense>
-                        </nav>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <div className="hidden lg:flex">
-                            <Suspense fallback={<SearchInputSkeleton />}>
-                                <SearchInput/>
-                            </Suspense>
-                        </div>
-                        {/* <Suspense>
-                            <LanguagePicker />
-                        </Suspense> */}
-                        <Suspense>
-                            <CurrencyPickerWrapper />
-                        </Suspense>
-                        <Suspense>
-                            <ThemeSwitcher />
-                        </Suspense>
-                        <Suspense>
-                            <NavbarCart/>
-                        </Suspense>
-                        <Suspense fallback={<NavbarUserSkeleton />}>
-                            <NavbarUser/>
-                        </Suspense>
-                    </div>
-                </div>
+  return (
+    <NavbarShell>
+      <div className="border-b border-stone-200/80 bg-[#f8f4ee]/90 backdrop-blur-md">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4">
+          <div className="relative flex h-20 items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-2 sm:gap-4">
+              <NavigationLink href="/" className="inline-flex shrink-0">
+                <ThemeLogo />
+              </NavigationLink>
             </div>
-        </header>
-    );
+
+            <div className="flex flex-1 items-center justify-end gap-1 sm:gap-2">
+              <div className="hidden lg:flex lg:items-center lg:gap-2">
+                <Suspense>
+                  <CurrencyPickerWrapper />
+                </Suspense>
+                <Suspense>
+                  <ThemeSwitcher />
+                </Suspense>
+              </div>
+              <Suspense>
+                <NavbarCart />
+              </Suspense>
+              <Suspense fallback={<NavbarUserSkeleton />}>
+                <NavbarUser />
+              </Suspense>
+              <Suspense>
+                <MobileNavWrapper />
+              </Suspense>
+            </div>
+          </div>
+        </div>
+      </div>
+    </NavbarShell>
+  );
 }

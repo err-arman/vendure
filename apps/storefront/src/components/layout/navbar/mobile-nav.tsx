@@ -2,7 +2,7 @@
 
 import {useState} from 'react';
 import { Link, useRouter } from '@/i18n/navigation';
-import {Menu, Search, ShoppingBag, User, Package, MapPin} from 'lucide-react';
+import {LogIn, Menu, Package, Search, ShoppingBag, User, UserPlus, MapPin} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {
@@ -23,10 +23,12 @@ interface Collection {
 
 interface MobileNavProps {
     collections: Collection[];
+    isLoggedIn: boolean;
 }
 
-export function MobileNav({collections}: MobileNavProps) {
+export function MobileNav({collections, isLoggedIn}: MobileNavProps) {
     const t = useTranslations('Navigation');
+    const tAuth = useTranslations('Auth');
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState('');
     const router = useRouter();
@@ -34,7 +36,7 @@ export function MobileNav({collections}: MobileNavProps) {
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         if (!searchValue.trim()) return;
-        router.push(`/search?q=${encodeURIComponent(searchValue.trim())}`);
+        router.push(`/search?query=${encodeURIComponent(searchValue.trim())}`);
         setOpen(false);
     };
 
@@ -109,53 +111,84 @@ export function MobileNav({collections}: MobileNavProps) {
                         </div>
                     )}
 
-                    {/* Account links */}
-                    <div>
-                        <p className="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                            {t('account')}
-                        </p>
-                        <nav className="flex flex-col gap-0.5">
+                    {/* Account links (logged in) or auth buttons (logged out) */}
+                    {isLoggedIn ? (
+                        <div>
+                            <p className="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                {t('account')}
+                            </p>
+                            <nav className="flex flex-col gap-0.5">
+                                <SheetClose
+                                    render={
+                                        <Link
+                                            href="/account/profile"
+                                            className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md hover:bg-accent transition-colors"
+                                        />
+                                    }
+                                    nativeButton={false}
+                                    onClick={handleLinkClick}
+                                >
+                                    <User className="h-5 w-5" />
+                                    {t('profile')}
+                                </SheetClose>
+                                <SheetClose
+                                    render={
+                                        <Link
+                                            href="/account/orders"
+                                            className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md hover:bg-accent transition-colors"
+                                        />
+                                    }
+                                    nativeButton={false}
+                                    onClick={handleLinkClick}
+                                >
+                                    <Package className="h-5 w-5" />
+                                    {t('orders')}
+                                </SheetClose>
+                                <SheetClose
+                                    render={
+                                        <Link
+                                            href="/account/addresses"
+                                            className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md hover:bg-accent transition-colors"
+                                        />
+                                    }
+                                    nativeButton={false}
+                                    onClick={handleLinkClick}
+                                >
+                                    <MapPin className="h-5 w-5" />
+                                    {t('addresses')}
+                                </SheetClose>
+                            </nav>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col gap-2 px-3">
                             <SheetClose
                                 render={
                                     <Link
-                                        href="/account/profile"
-                                        className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md hover:bg-accent transition-colors"
+                                        href="/sign-in"
+                                        className="flex items-center justify-center gap-2 rounded-full bg-stone-900 px-3 py-2.5 text-sm font-medium text-stone-50 transition-colors hover:bg-stone-800"
                                     />
                                 }
                                 nativeButton={false}
                                 onClick={handleLinkClick}
                             >
-                                <User className="h-5 w-5" />
-                                {t('profile')}
+                                <LogIn className="h-5 w-5" />
+                                {tAuth('signIn')}
                             </SheetClose>
                             <SheetClose
                                 render={
                                     <Link
-                                        href="/account/orders"
-                                        className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md hover:bg-accent transition-colors"
+                                        href="/register"
+                                        className="flex items-center justify-center gap-2 rounded-full bg-white px-3 py-2.5 text-sm font-medium text-stone-900 ring-1 ring-stone-200 transition-colors hover:bg-stone-50"
                                     />
                                 }
                                 nativeButton={false}
                                 onClick={handleLinkClick}
                             >
-                                <Package className="h-5 w-5" />
-                                {t('orders')}
+                                <UserPlus className="h-5 w-5" />
+                                {tAuth('createAccount')}
                             </SheetClose>
-                            <SheetClose
-                                render={
-                                    <Link
-                                        href="/account/addresses"
-                                        className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md hover:bg-accent transition-colors"
-                                    />
-                                }
-                                nativeButton={false}
-                                onClick={handleLinkClick}
-                            >
-                                <MapPin className="h-5 w-5" />
-                                {t('addresses')}
-                            </SheetClose>
-                        </nav>
-                    </div>
+                        </div>
+                    )}
                 </div>
             </SheetContent>
         </Sheet>

@@ -19,6 +19,8 @@ const nextConfig: NextConfig = {
       {
         hostname: "localhost",
       },
+      { hostname: "103.191.179.241", port: "3000" },
+      { hostname: "admin.eastbengal.coffee" },
     ],
   },
   experimental: {

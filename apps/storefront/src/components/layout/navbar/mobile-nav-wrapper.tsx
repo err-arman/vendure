@@ -1,16 +1,15 @@
 import {getRouteLocale} from '@/i18n/server';
-import {cacheLife, cacheTag} from 'next/cache';
 import {getTopCollections} from '@/lib/vendure/cached';
+import {getActiveCustomer} from '@/lib/vendure/actions';
 import {MobileNav} from '@/components/layout/navbar/mobile-nav';
 
 export async function MobileNavWrapper() {
-    "use cache";
-    cacheLife('days');
-
     const locale = await getRouteLocale();
-    cacheTag(`mobile-nav-${locale}`);
 
-    const collections = await getTopCollections(locale);
+    const [collections, customer] = await Promise.all([
+        getTopCollections(locale),
+        getActiveCustomer(),
+    ]);
 
-    return <MobileNav collections={collections} />;
+    return <MobileNav collections={collections} isLoggedIn={!!customer} />;
 }
