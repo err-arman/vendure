@@ -165,7 +165,7 @@ export function MobileNav({collections, isLoggedIn}: MobileNavProps) {
                                 render={
                                     <Link
                                         href="/sign-in"
-                                        className="flex items-center justify-center gap-2 rounded-full bg-stone-900 px-3 py-2.5 text-sm font-medium text-stone-50 transition-colors hover:bg-stone-800"
+                                        className="flex items-center justify-center gap-2 rounded-full bg-foreground px-3 py-2.5 text-sm font-medium text-background transition-colors hover:opacity-90"
                                     />
                                 }
                                 nativeButton={false}
@@ -178,7 +178,7 @@ export function MobileNav({collections, isLoggedIn}: MobileNavProps) {
                                 render={
                                     <Link
                                         href="/register"
-                                        className="flex items-center justify-center gap-2 rounded-full bg-white px-3 py-2.5 text-sm font-medium text-stone-900 ring-1 ring-stone-200 transition-colors hover:bg-stone-50"
+                                        className="flex items-center justify-center gap-2 rounded-full bg-background px-3 py-2.5 text-sm font-medium text-foreground ring-1 ring-border transition-colors hover:bg-muted"
                                     />
                                 }
                                 nativeButton={false}

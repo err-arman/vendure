@@ -11,12 +11,13 @@ export interface SearchInputParams {
 interface BuildSearchInputOptions {
     searchParams: { [key: string]: string | string[] | undefined };
     collectionSlug?: string;
+    take?: number;
+    skip?: number;
 }
 
-export function buildSearchInput({ searchParams, collectionSlug }: BuildSearchInputOptions): SearchInputParams {
+export function buildSearchInput({ searchParams, collectionSlug, take = 12, skip }: BuildSearchInputOptions): SearchInputParams {
     const page = Number(searchParams.page) || 1;
-    const take = 12;
-    const skip = (page - 1) * take;
+    const resolvedSkip = skip ?? (page - 1) * take;
     const sort = (searchParams.sort as string) || 'name-asc';
     const searchTerm = (searchParams.q as string) || (searchParams.query as string);
 
@@ -39,7 +40,7 @@ export function buildSearchInput({ searchParams, collectionSlug }: BuildSearchIn
         ...(searchTerm && { term: searchTerm }),
         ...(collectionSlug && { collectionSlug }),
         take,
-        skip,
+        skip: resolvedSkip,
         groupByProduct: true,
         sort: sortMapping[sort] || sortMapping['name-asc'],
         ...(facetValueIds.length > 0 && {

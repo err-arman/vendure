@@ -50,21 +50,6 @@ export async function Footer() {
                 className="h-4 w-auto"
               />
             </a>
-            <span>&</span>
-            <a
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-foreground transition-colors"
-            >
-              <Image
-                src="/next.svg"
-                alt="Next.js"
-                width={16}
-                height={16}
-                className="h-5 w-auto dark:invert"
-              />
-            </a>
           </div>
         </div>
       </div>

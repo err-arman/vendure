@@ -5,7 +5,7 @@ import {ProductGridSkeleton} from "@/components/shared/product-grid-skeleton";
 import {ProductGrid} from "@/components/commerce/product-grid";
 import {SearchControls} from "@/components/commerce/search-controls";
 import type {CategoryTab} from "@/components/commerce/category-tabs-bar";
-import {buildSearchInput, getCurrentPage} from "@/lib/search-helpers";
+import {buildSearchInput} from "@/lib/search-helpers";
 import {query} from "@/lib/vendure/api";
 import {SearchProductsQuery} from "@/lib/vendure/queries";
 import {getTopCollections} from "@/lib/vendure/cached";
@@ -24,7 +24,6 @@ export async function SearchResults({searchParams}: SearchResultsProps) {
     const searchParamsResolved = await searchParams;
     const locale = await getRouteLocale();
     const currencyCode = await getActiveCurrencyCode();
-    const page = getCurrentPage(searchParamsResolved);
 
     const t = await getTranslations({locale, namespace: 'Product'});
     const collections = await getTopCollections(locale);
@@ -41,6 +40,7 @@ export async function SearchResults({searchParams}: SearchResultsProps) {
         input: buildSearchInput({
             searchParams: searchParamsResolved,
             collectionSlug: activeCategory,
+            take: 24,
         })
     }, {languageCode: locale, currencyCode});
 
@@ -50,7 +50,15 @@ export async function SearchResults({searchParams}: SearchResultsProps) {
             <SearchControls categories={categories}/>
             <div className="mt-8">
                 <Suspense fallback={<ProductGridSkeleton/>}>
-                    <ProductGrid productDataPromise={productDataPromise} currentPage={page} take={12}/>
+                    <ProductGrid
+                        productDataPromise={productDataPromise}
+                        loadMoreQuery={{
+                            searchParams: searchParamsResolved,
+                            collectionSlug: activeCategory,
+                            locale,
+                            currencyCode,
+                        }}
+                    />
                 </Suspense>
             </div>
         </div>

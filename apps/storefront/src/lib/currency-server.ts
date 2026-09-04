@@ -10,8 +10,9 @@ import {getActiveChannelCached} from './vendure/cached';
  */
 export async function getActiveCurrencyCode(): Promise<string> {
     const cookieValue = await getCurrencyCookie();
-    if (cookieValue) return cookieValue;
-
     const channel = await getActiveChannelCached();
+    if (cookieValue && channel.availableCurrencyCodes.includes(cookieValue as never)) {
+        return cookieValue;
+    }
     return channel.defaultCurrencyCode;
 }

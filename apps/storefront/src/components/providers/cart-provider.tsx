@@ -8,6 +8,7 @@ import {
 
 interface CartContextValue {
   productIds: Set<string>;
+  itemCount: number;
   isInCart: (productId: string) => boolean;
   addProduct: (productId: string) => Promise<boolean>;
   refresh: () => Promise<void>;
@@ -17,10 +18,12 @@ const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [productIds, setProductIds] = useState<Set<string>>(new Set());
+  const [itemCount, setItemCount] = useState(0);
 
   const refresh = useCallback(async () => {
-    const ids = await getActiveOrderProductIds();
+    const { ids, totalQuantity } = await getActiveOrderProductIds();
     setProductIds(new Set(ids));
+    setItemCount(totalQuantity);
   }, []);
 
   useEffect(() => {
@@ -45,8 +48,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   const value = useMemo(
-    () => ({ productIds, isInCart, addProduct, refresh }),
-    [productIds, isInCart, addProduct, refresh],
+    () => ({ productIds, itemCount, isInCart, addProduct, refresh }),
+    [productIds, itemCount, isInCart, addProduct, refresh],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

@@ -12,7 +12,7 @@ import { NavbarUserSkeleton } from "@/components/shared/skeletons/navbar-user-sk
 export function Navbar() {
   return (
     <NavbarShell>
-      <div className="border-b border-stone-200/80 bg-[#f8f4ee]/90 backdrop-blur-md">
+      <div className="border-b border-border bg-[#f8f4ee]/90 backdrop-blur-md dark:bg-background/90">
         <div className="mx-auto max-w-7xl px-3 sm:px-4">
           <div className="relative flex h-20 items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-2 sm:gap-4">

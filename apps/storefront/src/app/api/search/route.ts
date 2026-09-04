@@ -14,7 +14,8 @@ export async function GET(req: NextRequest) {
         return Response.json({items: []});
     }
 
-    const limit = Math.min(Number(req.nextUrl.searchParams.get('limit')) || 6, 10);
+    const requestedLimit = Number(req.nextUrl.searchParams.get('limit'));
+    const limit = Math.min(Math.max(Number.isFinite(requestedLimit) ? requestedLimit : 6, 1), 10);
 
     const currencyCode = await getCurrencyCookie();
     const cookieStore = await cookies();

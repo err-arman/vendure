@@ -1,27 +1,24 @@
-import {ResultOf} from '@/graphql';
-import {ProductCard} from './product-card';
-import {Pagination} from '@/components/shared/pagination';
-import {SortDropdown} from './sort-dropdown';
+import type {ResultOf} from '@/graphql';
+import {ProductGridClient} from './product-grid-client';
 import {SearchProductsQuery} from "@/lib/vendure/queries";
 import {getRouteLocale} from '@/i18n/server';
 import {getTranslations} from 'next-intl/server';
+import type {LoadMoreQuery} from '@/app/api/products/page/route';
 
 interface ProductGridProps {
     productDataPromise: Promise<{
         data: ResultOf<typeof SearchProductsQuery>;
         token?: string;
     }>;
-    currentPage: number;
-    take: number;
+    loadMoreQuery: LoadMoreQuery;
 }
 
-export async function ProductGrid({productDataPromise, currentPage, take}: ProductGridProps) {
+export async function ProductGrid({productDataPromise, loadMoreQuery}: ProductGridProps) {
     const locale = await getRouteLocale();
     const t = await getTranslations({locale, namespace: 'Product'});
     const result = await productDataPromise;
 
     const searchResult = result.data.search;
-    const totalPages = Math.ceil(searchResult.totalItems / take);
 
     if (!searchResult.items.length) {
         return (
@@ -32,16 +29,10 @@ export async function ProductGrid({productDataPromise, currentPage, take}: Produ
     }
 
     return (
-        <div className="space-y-8">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-                {searchResult.items.map((product, i) => (
-                    <ProductCard key={'product-grid-item' + i} product={product}/>
-                ))}
-            </div>
-
-            {totalPages > 1 && (
-                <Pagination currentPage={currentPage} totalPages={totalPages}/>
-            )}
-        </div>
+        <ProductGridClient
+            items={searchResult.items}
+            totalItems={searchResult.totalItems}
+            query={loadMoreQuery}
+        />
     );
 }

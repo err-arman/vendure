@@ -107,6 +107,47 @@ export const GetProductVariantsQuery = graphql(`
     }
 `);
 
+export const GetProductForPickerQuery = graphql(`
+    query GetProductForPicker($slug: String!) {
+        product(slug: $slug) {
+            id
+            name
+            assets {
+                id
+                preview
+            }
+            variants {
+                id
+                name
+                sku
+                priceWithTax
+                stockLevel
+                options {
+                    id
+                    code
+                    name
+                    groupId
+                    group {
+                        id
+                        code
+                        name
+                    }
+                }
+            }
+            optionGroups {
+                id
+                code
+                name
+                options {
+                    id
+                    code
+                    name
+                }
+            }
+        }
+    }
+`);
+
 export const GetActiveOrderQuery = graphql(`
     query GetActiveOrder {
         activeOrder {

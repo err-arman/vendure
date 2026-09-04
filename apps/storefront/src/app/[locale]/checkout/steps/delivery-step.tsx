@@ -1,33 +1,35 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
-import { Loader2, Truck } from 'lucide-react';
-import { useRouter } from '@/i18n/navigation';
-import { useCheckout } from '../checkout-provider';
-import { setShippingMethod as setShippingMethodAction } from '../actions';
-import {useTranslations, useLocale} from 'next-intl';
-import {toIntlLocale} from '@/i18n/locale-utils';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
+import { Loader2, Truck } from "lucide-react";
+import { useRouter } from "@/i18n/navigation";
+import { useCheckout } from "../checkout-provider";
+import { setShippingMethod as setShippingMethodAction } from "../actions";
+import { useTranslations, useLocale } from "next-intl";
+import { toIntlLocale } from "@/i18n/locale-utils";
 
 interface DeliveryStepProps {
   onComplete: () => void;
 }
 
 export default function DeliveryStep({ onComplete }: DeliveryStepProps) {
-  const t = useTranslations('Checkout');
+  const t = useTranslations("Checkout");
   const locale = useLocale();
   const intlLocale = toIntlLocale(locale);
   const router = useRouter();
   const { shippingMethods, order } = useCheckout();
-  const [selectedMethodId, setSelectedMethodId] = useState<string | null>(() => {
-    if (order.shippingLines && order.shippingLines.length > 0) {
-      return order.shippingLines[0].shippingMethod.id;
-    }
-    return shippingMethods.length === 1 ? shippingMethods[0].id : null;
-  });
+  const [selectedMethodId, setSelectedMethodId] = useState<string | null>(
+    () => {
+      if (order.shippingLines && order.shippingLines.length > 0) {
+        return order.shippingLines[0].shippingMethod.id;
+      }
+      return shippingMethods.length === 1 ? shippingMethods[0].id : null;
+    },
+  );
   const [submitting, setSubmitting] = useState(false);
 
   const handleContinue = async () => {
@@ -39,7 +41,7 @@ export default function DeliveryStep({ onComplete }: DeliveryStepProps) {
       router.refresh();
       onComplete();
     } catch (error) {
-      console.error('Error setting shipping method:', error);
+      console.error("Error setting shipping method:", error);
     } finally {
       setSubmitting(false);
     }
@@ -48,16 +50,19 @@ export default function DeliveryStep({ onComplete }: DeliveryStepProps) {
   if (shippingMethods.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-muted-foreground">{t('noShippingMethods')}</p>
+        <p className="text-muted-foreground">{t("noShippingMethods")}</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <h3 className="font-semibold">{t('selectShippingMethod')}</h3>
+      <h3 className="font-semibold">{t("selectShippingMethod")}</h3>
 
-      <RadioGroup value={selectedMethodId || ''} onValueChange={setSelectedMethodId}>
+      <RadioGroup
+        value={selectedMethodId || ""}
+        onValueChange={setSelectedMethodId}
+      >
         {shippingMethods.map((method) => (
           <Label key={method.id} htmlFor={method.id} className="cursor-pointer">
             <Card className="p-4">
@@ -77,10 +82,10 @@ export default function DeliveryStep({ onComplete }: DeliveryStepProps) {
                 <div className="text-right flex-shrink-0">
                   <p className="font-semibold">
                     {method.priceWithTax === 0
-                      ? t('free')
+                      ? t("free")
                       : (method.priceWithTax / 100).toLocaleString(intlLocale, {
-                          style: 'currency',
-                          currency: 'USD',
+                          style: "currency",
+                          currency: order.currencyCode,
                         })}
                   </p>
                 </div>
@@ -96,7 +101,7 @@ export default function DeliveryStep({ onComplete }: DeliveryStepProps) {
         className="w-full"
       >
         {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {t('continueToPayment')}
+        {t("continueToPayment")}
       </Button>
     </div>
   );

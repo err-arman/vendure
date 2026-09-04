@@ -32,3 +32,8 @@ This project was generated with `@vendure/create`.
 
 - Run `npm run build` after changing backend code.
 - Run targeted tests for the package or feature you changed.
+
+## Build Permission
+
+- Do NOT run `npm run build` (or any slow/full build) without first asking the user for explicit permission.
+- Ask before every build; do not build by default after changes.
