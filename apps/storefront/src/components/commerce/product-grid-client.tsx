@@ -14,10 +14,9 @@ interface ProductGridClientProps {
     query: LoadMoreQuery;
 }
 
-const INITIAL_COUNT = 8;
-const STEP = 8;
-
 type LoadMoreItem = FragmentOf<typeof ProductCardFragment>;
+
+const STEP = 8;
 
 export function ProductGridClient({items, totalItems, query}: ProductGridClientProps) {
     const t = useTranslations('Product');

@@ -7,7 +7,6 @@ import { Price } from "@/components/commerce/price";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { ProductCardAction } from "@/components/commerce/product-card-action";
-import { useEffect } from "react";
 
 interface ProductCardProps {
   product: FragmentOf<typeof ProductCardFragment> | null | undefined;
@@ -24,10 +23,6 @@ export function ProductCard({ product: productProp, collectionSlug }: ProductCar
     return null;
   }
 
-  useEffect(() => {
-    console.log("product", product);
-  }, [product]);
-
   const priceWithTax = product.priceWithTax;
 
   const productHref = collectionSlug
@@ -40,24 +35,6 @@ export function ProductCard({ product: productProp, collectionSlug }: ProductCar
       : priceWithTax?.__typename === "SinglePrice"
         ? (priceWithTax.value ?? 0)
         : 0;
-
-  /*
-   * IMPORTANT:
-   *
-   * Replace `originalPrice` below with the actual original/base price
-   * field from your Vendure ProductCardFragment.
-   *
-   * The logic should be:
-   *
-   * originalPrice > currentPrice = discount available
-   */
-  const originalPrice = 0;
-
-  const hasDiscount = originalPrice > 0 && originalPrice > currentPrice;
-
-  const discountPercentage = hasDiscount
-    ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
-    : 0;
 
   const desktopPriceLabel =
     priceWithTax?.__typename === "PriceRange" ? (
@@ -154,105 +131,6 @@ export function ProductCard({ product: productProp, collectionSlug }: ProductCar
           />
         </div>
       </div>
-
-      {/* =========================================================
-          MOBILE
-          ========================================================= */}
-      {/* <div className="block md:hidden">
-        <Link
-          href={`/product/${product.slug}`}
-          className="block"
-        >
-          <div className="relative flex min-h-[96px] w-full items-center gap-3 rounded-lg border border-[#e5e7eb] bg-white p-2">
-
-          
-            <div className="relative h-[78px] w-[70px] shrink-0 overflow-hidden rounded-md bg-[#f3f3f3]">
-              {product.productAsset ? (
-                <Image
-                  src={product.productAsset.preview}
-                  alt={product.productName}
-                  fill
-                  sizes="70px"
-                  className="object-contain p-1"
-                />
-              ) : (
-                <div className="flex h-full items-center justify-center text-[10px] text-muted-foreground">
-                  {t("noImage")}
-                </div>
-              )}
-            </div>
-
-            <div className="min-w-0 flex-1 self-stretch py-1">
-
-              
-              <h3 className="truncate text-sm font-bold leading-5 text-[#111827]">
-                {product.productName}
-              </h3>
-
-            
-              <p className="truncate text-xs leading-4 text-[#8b9aaa]">
-                Medium roast, 100% origin Arabica
-              </p>
-
-            
-              <div className="mt-1 flex items-center gap-1">
-                <span className="text-xs font-semibold text-[#111827]">
-                  <Price
-                    value={currentPrice}
-                    currencyCode={product.currencyCode}
-                  />
-                </span>
-
-              
-                {hasDiscount && (
-                  <span className="text-[10px] text-[#9ca3af] line-through">
-                    <Price
-                      value={originalPrice}
-                      currencyCode={product.currencyCode}
-                    />
-                  </span>
-                )}
-              </div>
-
-            
-              {hasDiscount && (
-                <div className="mt-0.5 flex items-center gap-1">
-                  <span className="flex h-3 w-3 items-center justify-center rounded-full bg-[#43a047] text-[8px] text-white">
-                    %
-                  </span>
-
-                  <span className="text-[10px] font-semibold text-[#43a047]">
-                    {discountPercentage}% off
-                  </span>
-                </div>
-              )}
-            </div>
-
-            
-            <div
-              className="shrink-0"
-              onClick={(e) => e.preventDefault()}
-            >
-              <ProductCardAction
-                productId={product.productId}
-                productSlug={product.slug}
-                currencyCode={product.currencyCode}
-                className={(inCart) =>
-                  `flex h-8 min-w-[38px] items-center justify-center rounded-full px-2 text-[11px] font-semibold shadow-sm transition-all ${
-                    inCart
-                      ? "bg-[#A3B18A] text-black"
-                      : "bg-primary text-primary-foreground"
-                  }`
-                }
-                iconClassName="hidden"
-              >
-                Add
-              </ProductCardAction>
-            </div>
-
-          </div>
-        </Link>
-      </div> */}
 
       {/* =========================================================
     MOBILE
