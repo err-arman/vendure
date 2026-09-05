@@ -11,9 +11,10 @@ import { useEffect } from "react";
 
 interface ProductCardProps {
   product: FragmentOf<typeof ProductCardFragment> | null | undefined;
+  collectionSlug?: string;
 }
 
-export function ProductCard({ product: productProp }: ProductCardProps) {
+export function ProductCard({ product: productProp, collectionSlug }: ProductCardProps) {
   const t = useTranslations("Product");
   const product = productProp
     ? readFragment(ProductCardFragment, productProp)
@@ -28,6 +29,10 @@ export function ProductCard({ product: productProp }: ProductCardProps) {
   }, [product]);
 
   const priceWithTax = product.priceWithTax;
+
+  const productHref = collectionSlug
+    ? `/product/${product.slug}?collection=${collectionSlug}`
+    : `/product/${product.slug}`;
 
   const currentPrice =
     priceWithTax?.__typename === "PriceRange"
@@ -87,7 +92,7 @@ export function ProductCard({ product: productProp }: ProductCardProps) {
           ========================================================= */}
       <div className="hidden md:block">
         <div className="relative w-full">
-          <Link href={`/product/${product.slug}`} className="block w-full">
+          <Link href={productHref} className="block w-full">
             <div className="overflow-hidden rounded-xl bg-[#f1f5f9]">
               {/* Product name */}
               <div className="px-3 pb-1 pt-2">
@@ -253,90 +258,69 @@ export function ProductCard({ product: productProp }: ProductCardProps) {
     MOBILE
     ========================================================= */}
       <div className="block md:hidden">
-        <div className="relative w-full rounded-lg border border-[#e5e7eb] bg-white px-2.5 py-2">
+        <div className="flex w-full rounded-lg border border-[#e5e7eb] bg-white p-2.5">
+          {/* Left: 66% - product info */}
           <Link
-            href={`/product/${product.slug}`}
-            className="flex items-start gap-2.5"
+            href={productHref}
+            className="flex w-[66%] shrink-0 flex-col"
           >
-            {/* Product image */}
-            <div className="relative h-[60px] w-[60px] shrink-0 rounded-md bg-[#f3f4f6]">
-              {product.productAsset ? (
-                <Image
-                  src={product.productAsset.preview}
-                  alt={product.productName}
-                  fill
-                  sizes="60px"
-                  className="object-contain p-2"
+            {/* Product name */}
+            <h3 className="line-clamp-1 text-[15px] font-bold leading-[19px] text-[#111827]">
+              {product.productName}
+            </h3>
+
+            {/* Price */}
+            <div className="mt-0.5">
+              <span className="text-[12px] font-semibold leading-4 text-[#111827]">
+                <Price
+                  value={currentPrice}
+                  currencyCode={product.currencyCode}
                 />
-              ) : (
-                <div className="flex h-full items-center justify-center text-[9px] text-muted-foreground">
-                  {t("noImage")}
-                </div>
-              )}
+              </span>
             </div>
 
-            {/* Product information */}
-            <div className="min-w-0 flex-1 pb-1">
-              {/* Product name */}
-              <h3 className="text-[13px] font-bold leading-[17px] text-[#111827]">
-                {product.productName}
-              </h3>
-
-              {/* Description */}
-              <p className="mt-0.5 text-[11px] leading-[15px] text-[#8492a1]">
-                {product.description?.replace(/<[^>]*>/g, "").trim()}
-              </p>
-
-              {/* Price */}
-              <div className="mt-0.5 flex items-center gap-1">
-                <span className="text-[12px] font-semibold leading-4 text-[#111827]">
-                  <Price
-                    value={currentPrice}
-                    currencyCode={product.currencyCode}
-                  />
-                </span>
-
-                {/* Original price only if discounted */}
-                {hasDiscount && (
-                  <span className="text-[10px] leading-4 text-[#9ca3af] line-through">
-                    <Price
-                      value={originalPrice}
-                      currencyCode={product.currencyCode}
-                    />
-                  </span>
-                )}
-              </div>
-
-              {/* Discount only if available */}
-              {hasDiscount && (
-                <div className="mt-0.5 flex items-center gap-1">
-                  <span className="flex h-[11px] w-[11px] items-center justify-center rounded-full bg-[#43a047] text-[7px] font-bold leading-none text-white">
-                    %
-                  </span>
-
-                  <span className="text-[10px] font-semibold leading-3 text-[#43a047]">
-                    {discountPercentage}% off
-                  </span>
-                </div>
-              )}
-            </div>
+            {/* Description: 2 lines then ellipsis */}
+            <p className="mt-0.5 line-clamp-2 text-xs leading-[16px] text-[#8492a1]">
+              {product.description?.replace(/<[^>]*>/g, "").trim()}
+            </p>
           </Link>
 
-          {/* Add button */}
-          <div className="absolute bottom-2.5 right-2.5">
-            <ProductCardAction
-              productId={product.productId}
-              productSlug={product.slug}
-              currencyCode={product.currencyCode}
-              className={(inCart) =>
-                `flex h-[26px] items-center justify-center rounded-full px-2.5 text-[11px] font-semibold ${
-                  inCart ? "bg-[#A3B18A] text-black" : "bg-primary text-primary-foreground"
-                }`
-              }
-              iconClassName="hidden"
-            >
-              Add
-            </ProductCardAction>
+          {/* Right: 34% - product image + cart icon */}
+          <div className="relative w-[34%] shrink-0">
+            <Link href={productHref} className="block">
+              <div className="relative aspect-square overflow-hidden rounded-md bg-[#f3f4f6]">
+                {product.productAsset ? (
+                  <Image
+                    src={product.productAsset.preview}
+                    alt={product.productName}
+                    fill
+                    sizes="120px"
+                    className="object-contain p-2"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-[9px] text-muted-foreground">
+                    {t("noImage")}
+                  </div>
+                )}
+              </div>
+            </Link>
+
+            {/* Cart icon */}
+            <div className="absolute bottom-1.5 right-1.5">
+              <ProductCardAction
+                productId={product.productId}
+                productSlug={product.slug}
+                currencyCode={product.currencyCode}
+                className={(inCart) =>
+                  `flex h-8 w-8 items-center justify-center rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A3B18A] focus:ring-offset-2 ${
+                    inCart
+                      ? "bg-[#A3B18A] text-black"
+                      : "bg-[#555B46] text-white"
+                  }`
+                }
+                iconClassName="h-4 w-4"
+              />
+            </div>
           </div>
         </div>
       </div>

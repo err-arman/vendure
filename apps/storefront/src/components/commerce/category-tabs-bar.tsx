@@ -9,6 +9,7 @@ import { getNavbarHidden, subscribeNavbarHidden } from "@/lib/navbar-scroll";
 export interface CategoryTab {
   id: string;
   name: string;
+  count?: number;
 }
 
 interface CategoryTabsBarProps {
@@ -113,6 +114,11 @@ export function CategoryTabsBar({
                 }`}
               >
                 {category.name}
+                {category.count !== undefined && (
+                  <span className="ml-1 text-sm font-normal text-muted-foreground">
+                    ({category.count})
+                  </span>
+                )}
                 <span
                   aria-hidden="true"
                   className={`absolute inset-x-0 bottom-0 h-[3px] rounded-full bg-primary transition-opacity duration-200 ${

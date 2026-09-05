@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FragmentOf, ResultOf, readFragment } from "@/graphql";
 import { ProductCard } from "@/components/commerce/product-card";
-import { SpecialBlendCard } from "@/components/commerce/special-blend-card";
 import { CategoryTabsBar, type CategoryTab } from "@/components/commerce/category-tabs-bar";
 import { StickyCartBar } from "@/components/commerce/sticky-cart-bar";
 import { SearchProductsQuery } from "@/lib/vendure/queries";
@@ -28,11 +27,7 @@ interface Section {
   id: string;
   name: string;
   items: SearchItem[];
-}
-
-function isSpecialBlends(id: string, name: string): boolean {
-  const normalized = `${id} ${name}`.toLowerCase();
-  return normalized.includes("special") && normalized.includes("blend");
+  totalItems?: number;
 }
 
 interface CategoryProductSectionsProps {
@@ -52,7 +47,6 @@ function ProductSection({
 
   const hasMore = visibleCount < items.length;
   const visibleItems = items.slice(0, visibleCount);
-  const special = isSpecialBlends(id, name);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -83,35 +77,15 @@ function ProductSection({
         </div>
       ) : (
         <>
-          {special ? (
-            <>
-              <div className="grid grid-cols-1 gap-3 sm:hidden">
-                {visibleItems.map((product, i) => (
-                  <SpecialBlendCard
-                    key={`${id}-product-${i}`}
-                    product={product}
-                  />
-                ))}
-              </div>
-              <div className="hidden grid-cols-1 gap-4 sm:grid lg:grid-cols-2 xl:grid-cols-3">
-                {visibleItems.map((product, i) => (
-                  <ProductCard
-                    key={`${id}-product-${i}`}
-                    product={product}
-                  />
-                ))}
-              </div>
-            </>
-          ) : (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-              {visibleItems.map((product, i) => (
-                <ProductCard
-                  key={`${id}-product-${i}`}
-                  product={product}
-                />
-              ))}
-            </div>
-          )}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+            {visibleItems.map((product, i) => (
+              <ProductCard
+                key={`${id}-product-${i}`}
+                product={product}
+                collectionSlug={id}
+              />
+            ))}
+          </div>
           {hasMore && (
             <div ref={sentinelRef} className="flex justify-center py-8">
               <span className="animate-pulse text-sm text-muted-foreground">
@@ -135,6 +109,7 @@ export function CategoryProductSections({
   const categories: CategoryTab[] = sections.map((s) => ({
     id: s.id,
     name: s.name,
+    count: s.totalItems ?? s.items.length,
   }));
 
   const router = useRouter();

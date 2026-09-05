@@ -119,9 +119,17 @@ export default async function ProductDetailPage({
     notFound();
   }
 
-  // Get the primary collection (prefer deepest nested / most specific)
+  // Prefer the collection the user came from (?collection=...), then fall back
+  // to the deepest nested collection the product belongs to.
+  const requestedCollection =
+    typeof searchParamsResolved.collection === "string"
+      ? searchParamsResolved.collection
+      : undefined;
+  const productCollections = product.collections ?? [];
   const primaryCollection =
-    product.collections?.find((c) => c.parent?.id) ?? product.collections?.[0];
+    productCollections.find((c) => c.slug === requestedCollection) ??
+    productCollections.find((c) => c.parent?.id) ??
+    productCollections[0];
 
   // Hide options that belong to a shared option group but have no variant on
   // this product (Vendure 3.6 shared/global option groups).

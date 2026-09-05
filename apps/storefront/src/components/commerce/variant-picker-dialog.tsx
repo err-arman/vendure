@@ -111,54 +111,74 @@ export function VariantPickerDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="top-1/2 left-1/2 max-h-[calc(100dvh-3rem)] max-w-none -translate-x-1/2 -translate-y-1/2 gap-0 overflow-y-auto rounded-2xl p-0 sm:max-w-md"
+        className="
+    top-1/2 left-1/2
+    flex
+    h-[90dvh]
+    w-[95vw]
+    max-w-md
+    flex-col
+    -translate-x-1/2
+    -translate-y-1/2
+    gap-0
+    overflow-hidden
+    rounded-2xl
+    p-0
+  "
         showCloseButton
       >
         {loading ? (
           <>
             <DialogTitle className="sr-only">{t("selectOptions")}</DialogTitle>
-            <div className="flex h-64 items-center justify-center">
+
+            <div className="flex h-full items-center justify-center">
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           </>
         ) : loadError || !product ? (
           <>
             <DialogTitle className="sr-only">{t("errorTitle")}</DialogTitle>
-            <div className="flex h-64 items-center justify-center p-6 text-center text-sm text-muted-foreground">
+
+            <div className="flex h-full items-center justify-center p-6 text-center text-sm text-muted-foreground">
               {t("errorAddToCart")}
             </div>
           </>
         ) : (
           <>
-            <div className="px-5 pb-4 pt-5 sm:px-6">
-              <DialogTitle className="pr-8 text-xl font-semibold text-stone-900 dark:text-stone-100">
+            {/* HEADER */}
+            <div className="sticky top-0 z-20 border-b bg-background px-5 py-4">
+              <DialogTitle className="pr-8 text-lg font-semibold leading-tight">
                 {product.name}
               </DialogTitle>
             </div>
 
-            <div className="mx-5 aspect-square max-h-72 overflow-hidden rounded-xl bg-muted sm:mx-6">
-              {product.asset ? (
-                <Image
-                  src={product.asset}
-                  alt={product.name}
-                  width={600}
-                  height={600}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-                  {t("noImage")}
-                </div>
-              )}
-            </div>
+            {/* SCROLLABLE CONTENT */}
+            <div className="flex-1 overflow-y-auto px-5 py-5">
+              {/* IMAGE */}
+              <div className="mb-6 overflow-hidden rounded-xl bg-muted">
+                {product.asset ? (
+                  <Image
+                    src={product.asset}
+                    alt={product.name}
+                    width={600}
+                    height={600}
+                    className="mx-auto h-40 w-auto object-contain sm:h-48"
+                  />
+                ) : (
+                  <div className="flex h-40 items-center justify-center text-muted-foreground">
+                    {t("noImage")}
+                  </div>
+                )}
+              </div>
 
-            <div className="space-y-5 p-5 sm:p-6">
-              <div className="flex min-h-7 items-center justify-between gap-3">
+              {/* PRICE */}
+              <div className="mb-5 flex items-center justify-between">
                 <p className="text-sm font-semibold text-muted-foreground">
                   {t("selectOptions")}
                 </p>
+
                 {selectedVariant && (
-                  <p className="text-lg font-bold text-stone-900 dark:text-stone-100">
+                  <p className="text-lg font-bold">
                     <Price
                       value={selectedVariant.priceWithTax}
                       currencyCode={currencyCode}
@@ -167,52 +187,58 @@ export function VariantPickerDialog({
                 )}
               </div>
 
-              {product.optionGroups.map((group) => (
-                <div key={group.id} className="space-y-2.5">
-                  <p className="text-sm font-semibold text-stone-900 dark:text-stone-100">
-                    {group.name}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {group.options.map((option) => {
-                      const selected = selectedOptions[group.id] === option.id;
-                      return (
-                        <button
-                          key={option.id}
-                          type="button"
-                          onClick={() =>
-                            setSelectedOptions((prev) => ({
-                              ...prev,
-                              [group.id]: option.id,
-                            }))
-                          }
-                          className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors focus:outline-none ${
-                            selected
-                              ? "border-primary bg-primary text-primary-foreground"
-                              : "border-stone-200 bg-white text-stone-700 hover:border-stone-400 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-200"
-                          }`}
-                        >
-                          {option.name}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
+              {/* OPTIONS */}
+              <div className="space-y-6">
+                {product.optionGroups.map((group) => (
+                  <div key={group.id}>
+                    <p className="mb-3 text-sm font-semibold">{group.name}</p>
 
-              <div className="space-y-2.5">
-                <p className="text-sm font-semibold text-foreground">
-                  {t("quantity")}
-                </p>
-                <div className="grid h-11 w-36 grid-cols-[2.75rem_1fr_2.75rem] overflow-hidden rounded-lg border border-border bg-background">
+                    <div className="flex flex-wrap gap-2">
+                      {group.options.map((option) => {
+                        const selected =
+                          selectedOptions[group.id] === option.id;
+
+                        return (
+                          <button
+                            key={option.id}
+                            type="button"
+                            onClick={() =>
+                              setSelectedOptions((prev) => ({
+                                ...prev,
+                                [group.id]: option.id,
+                              }))
+                            }
+                            className={`min-h-10 max-w-full rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+                              selected
+                                ? "border-primary bg-primary text-primary-foreground"
+                                : "border-border bg-background hover:border-primary/50"
+                            }`}
+                          >
+                            <span className="block max-w-[140px] truncate">
+                              {option.name}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* QUANTITY */}
+              <div className="mt-8">
+                <p className="mb-3 text-sm font-semibold">{t("quantity")}</p>
+
+                <div className="grid h-11 w-36 grid-cols-[44px_1fr_44px] overflow-hidden rounded-lg border border-border">
                   <button
                     type="button"
                     onClick={() => setSafeQuantity(quantity - 1)}
                     disabled={quantity <= 1}
-                    aria-label={t("decreaseQuantity")}
-                    className="flex items-center justify-center text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
+                    className="flex items-center justify-center hover:bg-muted disabled:opacity-40"
                   >
                     <Minus className="h-4 w-4" />
                   </button>
+
                   <Input
                     type="number"
                     min={1}
@@ -221,20 +247,25 @@ export function VariantPickerDialog({
                     onChange={(event) =>
                       setSafeQuantity(Number(event.target.value))
                     }
-                    aria-label={t("quantity")}
-                    className="h-full rounded-none border-x border-y-0 border-border px-1 text-center font-semibold shadow-none focus-visible:ring-0"
+                    className="h-full rounded-none border-x border-y-0 text-center shadow-none focus-visible:ring-0"
                   />
+
                   <button
                     type="button"
                     onClick={() => setSafeQuantity(quantity + 1)}
-                    aria-label={t("increaseQuantity")}
-                    className="flex items-center justify-center text-foreground transition-colors hover:bg-muted"
+                    className="flex items-center justify-center hover:bg-muted"
                   >
                     <Plus className="h-4 w-4" />
                   </button>
                 </div>
               </div>
 
+              {/* EXTRA SPACE FOR STICKY FOOTER */}
+              <div className="h-24" />
+            </div>
+
+            {/* STICKY FOOTER */}
+            <div className="sticky bottom-0 z-20 border-t bg-background p-4">
               <Button
                 size="lg"
                 className="h-12 w-full rounded-xl text-base font-semibold"
@@ -249,6 +280,7 @@ export function VariantPickerDialog({
                 ) : (
                   <>
                     <ShoppingCart className="mr-2 h-5 w-5" />
+
                     {isPending
                       ? t("adding")
                       : !selectedVariant && product.optionGroups.length > 0

@@ -44,7 +44,7 @@ async function HomeProducts() {
         { input: searchInput(c.slug) },
         { languageCode: locale, currencyCode },
       );
-      return { id: c.slug, name: c.name, items: res.data.search.items };
+      return { id: c.slug, name: c.name, items: res.data.search.items, totalItems: res.data.search.totalItems };
     }),
   );
 

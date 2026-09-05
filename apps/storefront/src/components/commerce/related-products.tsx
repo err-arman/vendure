@@ -1,4 +1,4 @@
-import { ProductCarousel } from "@/components/commerce/product-carousel";
+import { ProductCard } from "@/components/commerce/product-card";
 import { getRouteLocale } from "@/i18n/server";
 import { cacheLife, cacheTag } from "next/cache";
 import {getActiveCurrencyCode} from '@/lib/currency-server';
@@ -64,9 +64,21 @@ export async function RelatedProducts({ collectionSlug, currentProductId }: Rela
     }
 
     return (
-        <ProductCarousel
-            title={t('relatedProducts')}
-            products={products}
-        />
+        <section className="py-12 md:py-16">
+            <div className="container mx-auto px-4">
+                <h2 className="mb-8 text-3xl font-bold md:text-4xl">
+                    {t("relatedProducts")}
+                </h2>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+                    {products.map((product) => (
+                        <ProductCard
+                            key={readFragment(ProductCardFragment, product).productId}
+                            product={product}
+                            collectionSlug={collectionSlug}
+                        />
+                    ))}
+                </div>
+            </div>
+        </section>
     );
 }
