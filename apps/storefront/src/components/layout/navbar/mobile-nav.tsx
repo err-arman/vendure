@@ -1,10 +1,10 @@
 'use client';
 
 import {useState} from 'react';
-import { Link, useRouter } from '@/i18n/navigation';
-import {LogIn, Menu, Package, Search, ShoppingBag, User, UserPlus, MapPin} from 'lucide-react';
+import Image from 'next/image';
+import { Link } from '@/i18n/navigation';
+import {LogIn, Menu, Package, ShoppingBag, User, UserPlus, MapPin} from 'lucide-react';
 import {Button} from '@/components/ui/button';
-import {Input} from '@/components/ui/input';
 import {
     Sheet,
     SheetTrigger,
@@ -30,15 +30,6 @@ export function MobileNav({collections, isLoggedIn}: MobileNavProps) {
     const t = useTranslations('Navigation');
     const tAuth = useTranslations('Auth');
     const [open, setOpen] = useState(false);
-    const [searchValue, setSearchValue] = useState('');
-    const router = useRouter();
-
-    const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!searchValue.trim()) return;
-        router.push(`/search?query=${encodeURIComponent(searchValue.trim())}`);
-        setOpen(false);
-    };
 
     const handleLinkClick = () => {
         setOpen(false);
@@ -52,22 +43,19 @@ export function MobileNav({collections, isLoggedIn}: MobileNavProps) {
             </SheetTrigger>
             <SheetContent side="left" className="w-full sm:max-w-sm overflow-y-auto">
                 <SheetHeader>
-                    <SheetTitle>{t('menu')}</SheetTitle>
+                    <SheetClose render={<Link href="/" />} nativeButton={false} onClick={handleLinkClick}>
+                        <Image
+                            src="/ecbr-logo.png"
+                            alt="East Bengal Coffee Roasters"
+                            width={88}
+                            height={100}
+                            className="h-12 w-auto"
+                        />
+                    </SheetClose>
+                    <SheetTitle className="sr-only">{t('menu')}</SheetTitle>
                 </SheetHeader>
 
                 <div className="flex flex-col gap-6 px-4 pb-6">
-                    {/* Search */}
-                    <form onSubmit={handleSearch} className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                            type="search"
-                            placeholder={t('searchProducts')}
-                            className="pl-9 w-full"
-                            value={searchValue}
-                            onChange={(e) => setSearchValue(e.target.value)}
-                        />
-                    </form>
-
                     {/* Shop All */}
                     <div>
                         <SheetClose

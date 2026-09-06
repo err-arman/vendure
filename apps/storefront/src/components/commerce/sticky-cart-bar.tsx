@@ -36,7 +36,7 @@ export function StickyCartBar({ show }: StickyCartBarProps) {
     };
   }, []);
 
-  const isHidden = !show || nearBottom;
+  const isHidden = !show || nearBottom || itemCount === 0;
 
   return (
     <Link

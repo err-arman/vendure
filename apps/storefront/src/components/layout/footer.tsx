@@ -43,11 +43,11 @@ export async function Footer() {
               className="hover:text-foreground transition-colors"
             >
               <Image
-                src="/butterfly.png"
+                src="/ecbr-logo.png"
                 alt="East Bengal Coffee Roasters"
-                width={40}
-                height={27}
-                className="h-4 w-auto"
+                width={88}
+                height={100}
+                className="h-6 w-auto"
               />
             </a>
           </div>

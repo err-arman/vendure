@@ -4,11 +4,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { Image as ImageIcon, Search } from "lucide-react";
-import {
-  CategoryTabsBar,
-  type CategoryTab,
-} from "@/components/commerce/category-tabs-bar";
+import { StickySearchBar } from "@/components/commerce/sticky-search-bar";
+import { SearchInput } from "@/components/commerce/search-input";
 import { Price } from "@/components/commerce/price";
+import { StickyCartBar } from "@/components/commerce/sticky-cart-bar";
 import { useTranslations } from "next-intl";
 
 export interface SearchSuggestion {
@@ -23,19 +22,14 @@ export interface SearchSuggestion {
   currencyCode?: string | null;
 }
 
-interface SearchControlsProps {
-  categories: CategoryTab[];
-}
-
 const SUGGESTION_ENDPOINT = "/api/search";
 const SUGGESTION_LIMIT = 6;
 
-export function SearchControls({ categories }: SearchControlsProps) {
+export function SearchControls() {
   const t = useTranslations("Product");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const activeId = searchParams.get("cat") ?? "all";
 
   const [query, setQuery] = useState(
     searchParams.get("query") ?? searchParams.get("q") ?? "",
@@ -46,6 +40,21 @@ export function SearchControls({ categories }: SearchControlsProps) {
   const [highlightIndex, setHighlightIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
   const fetchRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [showStickyCart, setShowStickyCart] = useState(false);
+
+  // Reveal the sticky cart bar once the user scrolls past the search area.
+  useEffect(() => {
+    const onScroll = () => {
+      setShowStickyCart(window.scrollY > 240);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
 
   // Fetch product suggestions (debounced) as the user types.
   useEffect(() => {
@@ -133,14 +142,6 @@ export function SearchControls({ categories }: SearchControlsProps) {
     setQuery(value);
   };
 
-  const handleSelect = (id: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (id && id !== "all") params.set("cat", id);
-    else params.delete("cat");
-    params.delete("page");
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-  };
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!suggestionsOpen || suggestions.length === 0) return;
 
@@ -162,41 +163,42 @@ export function SearchControls({ categories }: SearchControlsProps) {
     suggestionsOpen && query.trim().length >= 2 && !suggestionsLoading;
 
   return (
-    <div ref={containerRef} className="relative">
-      <CategoryTabsBar
-        categories={categories}
-        activeId={activeId}
-        onSelect={handleSelect}
-        query={query}
-        onQueryChange={handleQueryChange}
-        onSubmit={handleSubmit}
-        searchInputProps={{
-          onKeyDown: handleKeyDown,
-          onFocus: () => {
-            if (query.trim().length >= 2) setSuggestionsOpen(true);
-          },
-        }}
-      />
+    <>
+      <StickySearchBar
+        containerRef={containerRef}
+        content={
+          <SearchInput
+            query={query}
+            onQueryChange={handleQueryChange}
+            onSubmit={handleSubmit}
+            searchInputProps={{
+              onKeyDown: handleKeyDown,
+              onFocus: () => {
+                if (query.trim().length >= 2) setSuggestionsOpen(true);
+              },
+            }}
+          />
+        }
+        popover={
+          showPopover && (
+            <div className="absolute left-0 right-0 top-full z-40 mt-2 max-h-80 overflow-y-auto rounded-2xl border border-border bg-popover/95 p-1.5 shadow-xl shadow-stone-900/[0.08] backdrop-blur-xl sm:left-0 sm:right-auto sm:w-96">
+              <button
+                type="button"
+                onClick={() => navigateToSearch(query.trim())}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm text-foreground transition-colors hover:bg-muted"
+              >
+                <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <span>
+                  {t("searchFor")}{" "}
+                  <span className="font-medium text-foreground">{query.trim()}</span>
+                </span>
+              </button>
 
-      {showPopover && (
-        <div className="absolute left-0 right-0 top-full z-40 mt-2 max-h-80 overflow-y-auto rounded-2xl border border-border bg-popover/95 p-1.5 shadow-xl shadow-stone-900/[0.08] backdrop-blur-xl sm:left-0 sm:right-auto sm:w-96">
-          <button
-            type="button"
-            onClick={() => navigateToSearch(query.trim())}
-            className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm text-foreground transition-colors hover:bg-muted"
-          >
-            <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
-            <span>
-              {t("searchFor")}{" "}
-              <span className="font-medium text-foreground">{query.trim()}</span>
-            </span>
-          </button>
-
-          {suggestions.length === 0 ? (
-            <p className="px-3 py-2 text-sm text-muted-foreground">
-              {t("noSearchResultsShort")}
-            </p>
-          ) : (
+              {suggestions.length === 0 ? (
+                <p className="px-3 py-2 text-sm text-muted-foreground">
+                  {t("noSearchResultsShort")}
+                </p>
+              ) : (
             <ul className="mt-0.5">
               {suggestions.map((item, index) => (
                 <li key={item.productId}>
@@ -243,7 +245,10 @@ export function SearchControls({ categories }: SearchControlsProps) {
             </ul>
           )}
         </div>
-      )}
-    </div>
+          )}
+      />
+
+      <StickyCartBar show={showStickyCart} />
+    </>
   );
 }

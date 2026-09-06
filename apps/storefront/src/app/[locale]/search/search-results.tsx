@@ -4,12 +4,9 @@ import {getActiveCurrencyCode} from '@/lib/currency-server';
 import {ProductGridSkeleton} from "@/components/shared/product-grid-skeleton";
 import {ProductGrid} from "@/components/commerce/product-grid";
 import {SearchControls} from "@/components/commerce/search-controls";
-import type {CategoryTab} from "@/components/commerce/category-tabs-bar";
 import {buildSearchInput} from "@/lib/search-helpers";
 import {query} from "@/lib/vendure/api";
 import {SearchProductsQuery} from "@/lib/vendure/queries";
-import {getTopCollections} from "@/lib/vendure/cached";
-import {getTranslations} from "next-intl/server";
 
 interface SearchResultsProps {
     searchParams: Promise<{
@@ -25,21 +22,14 @@ export async function SearchResults({searchParams}: SearchResultsProps) {
     const locale = await getRouteLocale();
     const currencyCode = await getActiveCurrencyCode();
 
-    const t = await getTranslations({locale, namespace: 'Product'});
-    const collections = await getTopCollections(locale);
-    const categories: CategoryTab[] = [
-        {id: 'all', name: t('allProducts')},
-        ...collections.map(c => ({id: c.slug, name: c.name})),
-    ];
-
-    const activeCategory = searchParamsResolved.cat && searchParamsResolved.cat !== 'all'
+    const activeCollection = searchParamsResolved.cat && searchParamsResolved.cat !== 'all'
         ? searchParamsResolved.cat
         : undefined;
 
     const productDataPromise = query(SearchProductsQuery, {
         input: buildSearchInput({
             searchParams: searchParamsResolved,
-            collectionSlug: activeCategory,
+            collectionSlug: activeCollection,
             take: 24,
         })
     }, {languageCode: locale, currencyCode});
@@ -47,14 +37,14 @@ export async function SearchResults({searchParams}: SearchResultsProps) {
 
     return (
         <div>
-            <SearchControls categories={categories}/>
+            <SearchControls/>
             <div className="mt-8">
                 <Suspense fallback={<ProductGridSkeleton/>}>
                     <ProductGrid
                         productDataPromise={productDataPromise}
                         loadMoreQuery={{
                             searchParams: searchParamsResolved,
-                            collectionSlug: activeCategory,
+                            collectionSlug: activeCollection,
                             locale,
                             currencyCode,
                         }}

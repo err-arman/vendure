@@ -59,6 +59,7 @@
         "adding": "Adding...",
         "selectOptions": "Select Options",
         "quantity": "Quantity",
+        "total": "Total",
         "decreaseQuantity": "Decrease quantity",
         "increaseQuantity": "Increase quantity",
         "addedToCartMessage": "Added to cart",
@@ -108,7 +109,9 @@
             }
         },
         "products": "products",
-        "categories": "categories",
+        "collections": "collections",
+        "scrollCollectionsLeft": "Scroll collections left",
+        "scrollCollectionsRight": "Scroll collections right",
         "loading": "Loading...",
         "searchFor": "Search for",
         "noSearchResultsShort": "No matching products"
@@ -449,8 +452,8 @@
         "popularCollections": "Popular Collections"
     },
     "Footer": {
-        "description": "A modern, headless e-commerce storefront built with The Coffee Store and Next.js. Fast, flexible, and ready for production.",
-        "categories": "Categories",
+        "description": "A modern, headless e-commerce storefront built with East Bengal Coffee Roasters and Next.js. Fast, flexible, and ready for production.",
+        "collections": "Collections",
         "customer": "Customer",
         "shopAll": "Shop All",
         "orders": "Orders",
@@ -459,7 +462,7 @@
         "github": "GitHub",
         "documentation": "Documentation",
         "sourceCode": "Source Code",
-        "copyright": "The Coffee Store. All rights reserved.",
+        "copyright": "East Bengal Coffee Roasters. All rights reserved.",
         "poweredBy": "Powered by"
     },
     "Common": {

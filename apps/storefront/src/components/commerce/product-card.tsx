@@ -13,7 +13,10 @@ interface ProductCardProps {
   collectionSlug?: string;
 }
 
-export function ProductCard({ product: productProp, collectionSlug }: ProductCardProps) {
+export function ProductCard({
+  product: productProp,
+  collectionSlug,
+}: ProductCardProps) {
   const t = useTranslations("Product");
   const product = productProp
     ? readFragment(ProductCardFragment, productProp)
@@ -76,6 +79,11 @@ export function ProductCard({ product: productProp, collectionSlug }: ProductCar
                 <p className="text-center text-sm font-bold uppercase tracking-wide text-[#111827]">
                   {product.productName}
                 </p>
+                {!product.inStock && (
+                  <p className="mt-1 text-center text-[11px] font-semibold uppercase tracking-wide text-red-600">
+                    {t("outOfStock")}
+                  </p>
+                )}
               </div>
 
               {/* Image */}
@@ -120,14 +128,17 @@ export function ProductCard({ product: productProp, collectionSlug }: ProductCar
             productId={product.productId}
             productSlug={product.slug}
             currencyCode={product.currencyCode}
-            className={(inCart) =>
+            inStock={product.inStock}
+            className={(inCart, outOfStock) =>
               `absolute right-11 top-12 z-30 flex h-8 w-11 items-center justify-center rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#A3B18A] focus:ring-offset-2 ${
-                inCart
-                  ? "bg-[#A3B18A] text-black"
-                  : "bg-[#D9E4DD] text-black hover:bg-[#C0C8B6]"
+                outOfStock
+                  ? "bg-transparent text-black shadow-none"
+                  : inCart
+                    ? "bg-[#A3B18A] text-black"
+                    : "bg-[#D9E4DD] text-black hover:bg-[#C0C8B6]"
               }`
             }
-            iconClassName="h-4 w-4 text-white"
+            iconClassName={`h-4 w-4 ${product.inStock ? "text-white" : ""}`}
           />
         </div>
       </div>
@@ -138,29 +149,35 @@ export function ProductCard({ product: productProp, collectionSlug }: ProductCar
       <div className="block md:hidden">
         <div className="flex w-full rounded-lg border border-[#e5e7eb] bg-white p-2.5">
           {/* Left: 66% - product info */}
-          <Link
-            href={productHref}
-            className="flex w-[66%] shrink-0 flex-col"
-          >
+          <Link href={productHref} className="flex w-[66%] shrink-0 flex-col">
             {/* Product name */}
             <h3 className="line-clamp-1 text-[15px] font-bold leading-[19px] text-[#111827]">
               {product.productName}
             </h3>
 
+            {product.description?.replace(/<[^>]*>/g, "").trim() ? (
+              /* Description: 2 lines then ellipsis */
+              <p className="mt-0.5 line-clamp-2 flex-1 text-xs leading-[16px] text-[#8492a1]">
+                {product.description?.replace(/<[^>]*>/g, "").trim()}
+              </p>
+            ) : (
+              <span className="flex-1" />
+            )}
+
             {/* Price */}
-            <div className="mt-0.5">
+            <div className="mt-auto pt-0.5">
               <span className="text-[12px] font-semibold leading-4 text-[#111827]">
                 <Price
                   value={currentPrice}
                   currencyCode={product.currencyCode}
                 />
               </span>
+              {!product.inStock && (
+                <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-600">
+                  {t("outOfStock")}
+                </p>
+              )}
             </div>
-
-            {/* Description: 2 lines then ellipsis */}
-            <p className="mt-0.5 line-clamp-2 text-xs leading-[16px] text-[#8492a1]">
-              {product.description?.replace(/<[^>]*>/g, "").trim()}
-            </p>
           </Link>
 
           {/* Right: 34% - product image + cart icon */}
@@ -189,11 +206,14 @@ export function ProductCard({ product: productProp, collectionSlug }: ProductCar
                 productId={product.productId}
                 productSlug={product.slug}
                 currencyCode={product.currencyCode}
-                className={(inCart) =>
+                inStock={product.inStock}
+                className={(inCart, outOfStock) =>
                   `flex h-8 w-8 items-center justify-center rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A3B18A] focus:ring-offset-2 ${
-                    inCart
-                      ? "bg-[#A3B18A] text-black"
-                      : "bg-[#555B46] text-white"
+                    outOfStock
+                      ? "bg-transparent text-[#8492a1] shadow-none"
+                      : inCart
+                        ? "bg-[#A3B18A] text-black"
+                        : "bg-[#555B46] text-white"
                   }`
                 }
                 iconClassName="h-4 w-4"

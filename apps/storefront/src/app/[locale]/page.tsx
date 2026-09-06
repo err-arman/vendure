@@ -4,7 +4,7 @@ import { getRouteLocale } from "@/i18n/server";
 import { getActiveCurrencyCode } from "@/lib/currency-server";
 import { HeroSection } from "@/components/layout/hero-section";
 import { ProductGridSkeleton } from "@/components/shared/product-grid-skeleton";
-import { CategoryProductSections } from "@/components/commerce/category-product-sections";
+import { CollectionProductSections } from "@/components/commerce/collection-product-sections";
 import { SITE_NAME, SITE_URL, buildCanonicalUrl } from "@/lib/metadata";
 import { getTranslations } from "next-intl/server";
 import { toOgLocale } from "@/i18n/locale-utils";
@@ -56,7 +56,7 @@ async function HomeProducts() {
       id="products"
       className="mx-auto max-w-7xl px-3 pb-20 pt-6 sm:px-4 lg:px-8"
     >
-      <CategoryProductSections sections={sections} pageSize={PAGE_SIZE} />
+      <CollectionProductSections sections={sections} pageSize={PAGE_SIZE} />
     </section>
   );
 }

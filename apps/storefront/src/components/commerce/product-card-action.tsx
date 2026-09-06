@@ -10,7 +10,8 @@ interface ProductCardActionProps {
   productId: string;
   productSlug: string;
   currencyCode?: string | null;
-  className: (inCart: boolean) => string;
+  inStock?: boolean;
+  className: (inCart: boolean, outOfStock?: boolean) => string;
   iconClassName?: string;
   children?: ReactNode;
 }
@@ -19,6 +20,7 @@ export function ProductCardAction({
   productId,
   productSlug,
   currencyCode,
+  inStock = true,
   className,
   iconClassName,
   children,
@@ -28,14 +30,18 @@ export function ProductCardAction({
   const [addedNow, setAddedNow] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const inCart = addedNow || isInCart(productId);
+  const outOfStock = !inStock;
 
   return (
     <>
       <button
         type="button"
         onClick={() => setPickerOpen(true)}
-        aria-label={inCart ? t("inCart") : t("addToCart")}
-        className={className(inCart)}
+        disabled={outOfStock}
+        aria-label={
+          outOfStock ? t("outOfStock") : inCart ? t("inCart") : t("addToCart")
+        }
+        className={className(inCart, outOfStock)}
       >
         {inCart ? (
           <Check className={iconClassName} />

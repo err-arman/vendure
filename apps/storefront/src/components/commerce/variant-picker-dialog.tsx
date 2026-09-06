@@ -114,7 +114,7 @@ export function VariantPickerDialog({
         className="
     top-1/2 left-1/2
     flex
-    h-[90dvh]
+    max-h-[90dvh]
     w-[95vw]
     max-w-md
     flex-col
@@ -146,14 +146,14 @@ export function VariantPickerDialog({
         ) : (
           <>
             {/* HEADER */}
-            <div className="sticky top-0 z-20 border-b bg-background px-5 py-4">
+            <div className="shrink-0 border-b bg-background px-5 py-4">
               <DialogTitle className="pr-8 text-lg font-semibold leading-tight">
                 {product.name}
               </DialogTitle>
             </div>
 
             {/* SCROLLABLE CONTENT */}
-            <div className="flex-1 overflow-y-auto px-5 py-5">
+            <div className="grow min-h-0 overflow-y-auto px-5 py-5">
               {/* IMAGE */}
               <div className="mb-6 overflow-hidden rounded-xl bg-muted">
                 {product.asset ? (
@@ -259,14 +259,26 @@ export function VariantPickerDialog({
                   </button>
                 </div>
               </div>
-
-              {/* EXTRA SPACE FOR STICKY FOOTER */}
-              <div className="h-24" />
             </div>
 
             {/* STICKY FOOTER */}
-            <div className="sticky bottom-0 z-20 border-t bg-background p-4">
-              <Button
+            <div className="shrink-0 border-t bg-background p-4">
+                {selectedVariant && (
+                  <div className="mb-3 flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">
+                      {t("total")}
+                    </span>
+
+                    <span className="text-lg font-bold">
+                      <Price
+                        value={selectedVariant.priceWithTax * quantity}
+                        currencyCode={currencyCode}
+                      />
+                    </span>
+                  </div>
+                )}
+
+                <Button
                 size="lg"
                 className="h-12 w-full rounded-xl text-base font-semibold"
                 disabled={!canAdd || isPending}

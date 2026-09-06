@@ -11,89 +11,17 @@ export async function HeroSection() {
       {/* Overlay for slight dimming */}
       <div className="absolute inset-0 bg-black/20" />
 
-      {/* Curved text + circular logo */}
+      {/* Logo medallion */}
       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6">
         <div className="flex items-center justify-center">
-          <div className="relative w-72 h-72 md:w-72 md:h-72 lg:w-[470px] lg:h-[470px]">
+          <div className="relative w-64 h-64 md:w-72 md:h-72 lg:w-[470px] lg:h-[470px]">
             <div className="absolute inset-0 bg-gradient-to-b from-indigo-900/80 to-indigo-900/80 rounded-full border-indigo-500 shadow-2xl flex flex-col items-center justify-center">
               <img
-                src="/butterfly.png"
-                alt="The Coffee Store"
-                className="w-32 h-28 lg:w-48 lg:h-44 object-contain"
+                src="/ecbr-logo.png"
+                alt="East Bengal Coffee Roasters"
+                className="w-40 h-auto lg:w-80 lg:h-auto object-contain"
               />
             </div>
-
-            <svg
-              width="100%"
-              height="100%"
-              viewBox="0 0 300 300"
-              className="absolute inset-0 overflow-visible"
-              suppressHydrationWarning
-            >
-              {(() => {
-                const text = "THE COFFEE STORE";
-                const characters = text.split("");
-                const radius = 167;
-                const letterSpacing = 30;
-                const curveFactor = 1.0;
-                const fontSize = 38;
-                const strokeColor = "#7b4b00";
-                const strokeWidth = 4;
-                const fillColor = "#ffffff";
-                const strokeOffsetX = 2;
-                const strokeOffsetY = 2;
-
-                const totalAngle =
-                  (characters.length - 1) *
-                  (letterSpacing / radius) *
-                  curveFactor;
-                const startAngle = -totalAngle / 2;
-
-                return characters.map((char, i) => {
-                  const angle =
-                    startAngle + i * (letterSpacing / radius) * curveFactor;
-                  const x = 150 + radius * Math.sin(angle);
-                  const y = 150 - radius * Math.cos(angle);
-                  const rotate = (angle * 180) / Math.PI;
-
-                  return (
-                    <g
-                      key={i}
-                      transform={`translate(${x},${y}) rotate(${rotate})`}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      suppressHydrationWarning
-                    >
-                      <text
-                        x={strokeOffsetX}
-                        y={strokeOffsetY}
-                        style={{
-                          fontFamily: "Impact, sans-serif",
-                          fontSize,
-                          fontWeight: "bold",
-                          stroke: strokeColor,
-                          strokeWidth,
-                          fill: "none",
-                        }}
-                      >
-                        {char}
-                      </text>
-                      <text
-                        style={{
-                          fontFamily: "Impact, sans-serif",
-                          fontSize,
-                          fontWeight: "bold",
-                          fill: fillColor,
-                        }}
-                        suppressHydrationWarning
-                      >
-                        {char}
-                      </text>
-                    </g>
-                  );
-                });
-              })()}
-            </svg>
           </div>
         </div>
       </div>

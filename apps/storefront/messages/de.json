@@ -59,6 +59,7 @@
         "adding": "Wird hinzugefügt...",
         "selectOptions": "Optionen wählen",
         "quantity": "Menge",
+        "total": "Gesamt",
         "decreaseQuantity": "Menge verringern",
         "increaseQuantity": "Menge erhöhen",
         "addedToCartMessage": "In den Warenkorb gelegt",
@@ -108,7 +109,9 @@
             }
         },
         "products": "Produkte",
-        "categories": "Kategorien",
+        "collections": "Kollektionen",
+        "scrollCollectionsLeft": "Kollektionen nach links scrollen",
+        "scrollCollectionsRight": "Kollektionen nach rechts scrollen",
         "loading": "Laden...",
         "searchFor": "Suchen nach",
         "noSearchResultsShort": "Keine passenden Produkte"
@@ -446,11 +449,11 @@
         "message": "Die gesuchte Seite existiert nicht, wurde verschoben oder ist vorübergehend nicht verfügbar.",
         "goHome": "Zur Startseite",
         "browseProducts": "Produkte durchsuchen",
-        "popularCollections": "Beliebte Kategorien"
+        "popularCollections": "Beliebte Kollektionen"
     },
     "Footer": {
-        "description": "Ein moderner, Headless-E-Commerce-Shop, erstellt mit The Coffee Store und Next.js. Schnell, flexibel und produktionsbereit.",
-        "categories": "Kategorien",
+        "description": "Ein moderner, Headless-E-Commerce-Shop, erstellt mit East Bengal Coffee Roasters und Next.js. Schnell, flexibel und produktionsbereit.",
+        "collections": "Kollektionen",
         "customer": "Kunde",
         "shopAll": "Alle Produkte",
         "orders": "Bestellungen",
@@ -459,7 +462,7 @@
         "github": "GitHub",
         "documentation": "Dokumentation",
         "sourceCode": "Quellcode",
-        "copyright": "The Coffee Store. Alle Rechte vorbehalten.",
+        "copyright": "East Bengal Coffee Roasters. Alle Rechte vorbehalten.",
         "poweredBy": "Powered by"
     },
     "Common": {

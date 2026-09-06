@@ -3,8 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FragmentOf, ResultOf, readFragment } from "@/graphql";
 import { ProductCard } from "@/components/commerce/product-card";
-import { CategoryTabsBar, type CategoryTab } from "@/components/commerce/category-tabs-bar";
+import { CollectionTabs, type CollectionTab } from "@/components/commerce/collection-tabs";
 import { StickyCartBar } from "@/components/commerce/sticky-cart-bar";
+import { StickySearchBar } from "@/components/commerce/sticky-search-bar";
+import { SearchInput } from "@/components/commerce/search-input";
 import { SearchProductsQuery } from "@/lib/vendure/queries";
 import { ProductCardFragment } from "@/lib/vendure/fragments";
 import { useTranslations } from "next-intl";
@@ -27,10 +29,9 @@ interface Section {
   id: string;
   name: string;
   items: SearchItem[];
-  totalItems?: number;
 }
 
-interface CategoryProductSectionsProps {
+interface CollectionProductSectionsProps {
   sections: Section[];
   pageSize: number;
 }
@@ -99,17 +100,16 @@ function ProductSection({
   );
 }
 
-export function CategoryProductSections({
+export function CollectionProductSections({
   sections,
   pageSize,
-}: CategoryProductSectionsProps) {
+}: CollectionProductSectionsProps) {
   const t = useTranslations("Product");
   const [query, setQuery] = useState("");
   const [activeId, setActiveId] = useState(sections[0]?.id ?? "all");
-  const categories: CategoryTab[] = sections.map((s) => ({
+  const collections: CollectionTab[] = sections.map((s) => ({
     id: s.id,
     name: s.name,
-    count: s.totalItems ?? s.items.length,
   }));
 
   const router = useRouter();
@@ -327,22 +327,30 @@ export function CategoryProductSections({
   return (
     <>
       <div ref={sentinelRef} className="h-px w-full" aria-hidden />
-      <CategoryTabsBar
-        categories={categories}
-        activeId={activeId}
-        onSelect={scrollToSection}
-        query={query}
-        onQueryChange={setQuery}
-        onSubmit={handleSubmit}
+      <StickySearchBar
         containerRef={searchContainerRef}
-        searchInputProps={{
-          onKeyDown: handleSearchKeyDown,
-          onFocus: () => {
-            if (query.trim().length >= 2) setSuggestionsOpen(true);
-          },
-        }}
-      >
-        {showPopover && (
+        content={
+          <>
+            <SearchInput
+              query={query}
+              onQueryChange={setQuery}
+              onSubmit={handleSubmit}
+              searchInputProps={{
+                onKeyDown: handleSearchKeyDown,
+                onFocus: () => {
+                  if (query.trim().length >= 2) setSuggestionsOpen(true);
+                },
+              }}
+            />
+            <CollectionTabs
+              collections={collections}
+              activeId={activeId}
+              onSelect={scrollToSection}
+            />
+          </>
+        }
+        popover={
+          showPopover && (
           <div className="mx-auto w-full max-w-7xl rounded-2xl border border-border bg-popover/95 p-1.5 shadow-xl shadow-stone-900/[0.08] backdrop-blur-xl">
             <button
               type="button"
@@ -410,7 +418,7 @@ export function CategoryProductSections({
             )}
           </div>
         )}
-      </CategoryTabsBar>
+    />
 
       <div className={tabsStuck ? "pb-20" : ""}>
         {filteredSections.map((section) => (
