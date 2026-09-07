@@ -169,7 +169,7 @@ export function ProductCard({
 
             {/* Price */}
             <div className="mt-1">
-              <span className="text-[13px] font-medium text-[#111827]">
+              <span className="text-[13px] font-bold text-primary">
                 <Price
                   value={currentPrice}
                   currencyCode={product.currencyCode}
