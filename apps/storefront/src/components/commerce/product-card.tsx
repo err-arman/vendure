@@ -147,76 +147,83 @@ export function ProductCard({
     MOBILE
     ========================================================= */}
       <div className="block md:hidden">
-        <div className="flex w-full rounded-lg border border-[#e5e7eb] bg-white p-2.5">
-          {/* Left: 66% - product info */}
-          <Link href={productHref} className="flex w-[66%] shrink-0 flex-col">
+        <div className="flex w-full rounded-2xl border border-[#e5e7eb] bg-white p-3">
+          {/* Left content */}
+          <Link
+            href={productHref}
+            className="flex min-w-0 flex-1 flex-col pr-3"
+          >
             {/* Product name */}
-            <h3 className="line-clamp-1 text-[15px] font-bold leading-[19px] text-[#111827]">
+            <h3 className="line-clamp-1 text-[15px] font-bold leading-[20px] text-[#111827]">
               {product.productName}
             </h3>
 
+            {/* Description */}
             {product.description?.replace(/<[^>]*>/g, "").trim() ? (
-              /* Description: 2 lines then ellipsis */
-              <p className="mt-0.5 line-clamp-2 flex-1 text-xs leading-[16px] text-[#8492a1]">
+              <p className="mt-2 min-w-0 line-clamp-2 overflow-hidden text-sm leading-[18px] text-[#6b7280]">
                 {product.description?.replace(/<[^>]*>/g, "").trim()}
               </p>
             ) : (
-              <span className="flex-1" />
+              <div className="" />
             )}
 
             {/* Price */}
-            <div className="mt-auto pt-0.5">
-              <span className="text-[12px] font-semibold leading-4 text-[#111827]">
+            <div className="mt-1">
+              <span className="text-[13px] font-medium text-[#111827]">
                 <Price
                   value={currentPrice}
                   currencyCode={product.currencyCode}
                 />
               </span>
+            </div>
+
+            {/* Bottom row */}
+            <div className="mt-auto flex items-center pt-2">
               {!product.inStock && (
-                <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-600">
+                <span className="text-[10px] font-semibold uppercase tracking-wide text-red-600">
                   {t("outOfStock")}
-                </p>
+                </span>
               )}
             </div>
           </Link>
 
-          {/* Right: 34% - product image + cart icon */}
-          <div className="relative w-[34%] shrink-0">
+          {/* Right image */}
+          <div className="relative w-[110px] shrink-0">
             <Link href={productHref} className="block">
-              <div className="relative aspect-square overflow-hidden rounded-md bg-[#f3f4f6]">
+              <div className="relative aspect-square overflow-hidden rounded-xl bg-[#f3f4f6]">
                 {product.productAsset ? (
                   <Image
                     src={product.productAsset.preview}
                     alt={product.productName}
                     fill
-                    sizes="120px"
-                    className="object-contain p-2"
+                    sizes="110px"
+                    className="object-cover"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-[9px] text-muted-foreground">
+                  <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">
                     {t("noImage")}
                   </div>
                 )}
               </div>
             </Link>
 
-            {/* Cart icon */}
-            <div className="absolute bottom-1.5 right-1.5">
+            {/* Add button */}
+            <div className="absolute bottom-2 right-2">
               <ProductCardAction
                 productId={product.productId}
                 productSlug={product.slug}
                 currencyCode={product.currencyCode}
                 inStock={product.inStock}
                 className={(inCart, outOfStock) =>
-                  `flex h-8 w-8 items-center justify-center rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A3B18A] focus:ring-offset-2 ${
+                  `flex h-9 w-9 items-center justify-center rounded-full shadow-md transition-all ${
                     outOfStock
-                      ? "bg-transparent text-[#8492a1] shadow-none"
+                      ? "bg-white text-[#9ca3af]"
                       : inCart
                         ? "bg-[#A3B18A] text-black"
-                        : "bg-[#555B46] text-white"
+                        : "bg-white text-[#111827]"
                   }`
                 }
-                iconClassName="h-4 w-4"
+                iconClassName="h-5 w-5"
               />
             </div>
           </div>

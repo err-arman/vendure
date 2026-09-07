@@ -106,7 +106,7 @@ export function CollectionProductSections({
 }: CollectionProductSectionsProps) {
   const t = useTranslations("Product");
   const [query, setQuery] = useState("");
-  const [activeId, setActiveId] = useState(sections[0]?.id ?? "all");
+  const [activeId, setActiveId] = useState(() => sections[0]?.id ?? "");
   const collections: CollectionTab[] = sections.map((s) => ({
     id: s.id,
     name: s.name,
@@ -236,79 +236,84 @@ export function CollectionProductSections({
     : sections;
 
   // Scrollspy suppression: while a tab-triggered smooth scroll is in progress
-  // the IntersectionObserver would keep overriding activeId with whichever
-  // section is passing through the active zone (causing the tab to "unselect").
-  const suppressSpyRef = useRef(false);
-  const spyCooldownRef = useRef<number | null>(null);
+  // the active tab should stay on the clicked collection until the scroll
+  // actually settles, so intermediate sections never steal the selection.
+  const spyRef = useRef(false);
 
-  // Scrollspy: highlight the section currently in view.
+  // Keep the selection aligned with the section list: default to the first
+  // collection and never leave activeId pointing at a tab that doesn't exist.
   useEffect(() => {
-    const ids = sections.map((s) => s.id);
-    const sectionObserver = new IntersectionObserver(
-      (entries) => {
-        if (suppressSpyRef.current) return;
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActiveId(entry.target.id);
-          }
-        }
-      },
-      { rootMargin: "0px 0px -60% 0px", threshold: 0 },
+    if (sections.length === 0) return;
+    setActiveId((current) =>
+      sections.some((s) => s.id === current) ? current : sections[0].id,
     );
-
-    const headerObserver = new IntersectionObserver(
-      (entries) => {
-        if (suppressSpyRef.current) return;
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActiveId(entry.target.id);
-          }
-        }
-      },
-      { rootMargin: "0px 0px -55% 0px", threshold: 0 },
-    );
-
-    for (const id of ids) {
-      const section = document.getElementById(id);
-      if (section) {
-        sectionObserver.observe(section);
-        const heading = section.querySelector("h2");
-        if (heading) headerObserver.observe(heading);
-      }
-    }
-
-    return () => {
-      sectionObserver.disconnect();
-      headerObserver.disconnect();
-      if (spyCooldownRef.current) {
-        window.clearTimeout(spyCooldownRef.current);
-        spyCooldownRef.current = null;
-      }
-    };
   }, [sections]);
 
-  const scrollToSection = useCallback((id: string) => {
-    setActiveId(id);
-
-    if (spyCooldownRef.current) {
-      window.clearTimeout(spyCooldownRef.current);
+  // Deterministically compute which section covers the scroll-spy trigger
+  // line from the current scroll position. Unlike IntersectionObserver entry
+  // timing, this always resolves to a valid section, so the active tab's
+  // underline can never go blank.
+  const getActiveSectionId = useCallback(() => {
+    const spyLine = window.innerHeight * 0.35;
+    let current = sections[0]?.id ?? "";
+    for (const section of sections) {
+      const el = document.getElementById(section.id);
+      if (el && el.getBoundingClientRect().top <= spyLine) {
+        current = section.id;
+      }
     }
+    return current;
+  }, [sections]);
 
-    const target = document.getElementById(id);
-    if (!target) return;
+  // Highlight the section currently in view while the user scrolls.
+  useEffect(() => {
+    const handleScroll = () => {
+      if (spyRef.current) return;
+      setActiveId(getActiveSectionId());
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, [getActiveSectionId, sections]);
 
-    // Disable the scrollspy until the smooth scroll settles, so intermediate
-    // sections don't overwrite the freshly-selected tab. The cooldown scales
-    // with the scroll distance so long jumps aren't cut short.
-    suppressSpyRef.current = true;
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
-    const distance = Math.abs(target.getBoundingClientRect().top);
-    const cooldown = Math.min(2000, Math.max(500, distance * 0.3));
-    spyCooldownRef.current = window.setTimeout(() => {
-      suppressSpyRef.current = false;
-      spyCooldownRef.current = null;
-    }, cooldown);
-  }, []);
+  const scrollToSection = useCallback(
+    (id: string) => {
+      setActiveId(id);
+
+      const target = document.getElementById(id);
+      if (!target) return;
+
+      // Suppress the scrollspy until the smooth scroll settles on its target,
+      // then recompute from the final scroll position. Suppression ends only
+      // when scrolling actually stops, so it can't expire mid-scroll and let
+      // an intermediate section hijack the freshly-selected tab.
+      spyRef.current = true;
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      let lastY = window.scrollY;
+      let settled = 0;
+      const started = performance.now();
+      const finish = () => {
+        const y = window.scrollY;
+        if (Math.abs(y - lastY) < 1) settled += 1;
+        else settled = 0;
+        lastY = y;
+
+        if (settled >= 3 || performance.now() - started > 4000) {
+          spyRef.current = false;
+          setActiveId(getActiveSectionId());
+          return;
+        }
+        requestAnimationFrame(finish);
+      };
+      requestAnimationFrame(finish);
+    },
+    [getActiveSectionId],
+  );
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [tabsStuck, setTabsStuck] = useState(false);

@@ -97,7 +97,7 @@ export function CollectionTabs({
               type="button"
               onClick={() => onSelect(collection.id)}
               aria-current={isActive ? "true" : undefined}
-              className={`relative flex h-9 shrink-0 items-start px-0 whitespace-nowrap font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 ${
+              className={`relative flex h-9 shrink-0 items-start px-2 whitespace-nowrap font-[12] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 ${
                 isActive
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"
