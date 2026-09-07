@@ -158,15 +158,6 @@ export function ProductCard({
               {product.productName}
             </h3>
 
-            {/* Description */}
-            {product.description?.replace(/<[^>]*>/g, "").trim() ? (
-              <p className="mt-2 min-w-0 line-clamp-2 overflow-hidden text-sm leading-[18px] text-[#6b7280]">
-                {product.description?.replace(/<[^>]*>/g, "").trim()}
-              </p>
-            ) : (
-              <div className="" />
-            )}
-
             {/* Price */}
             <div className="mt-1">
               <span className="text-[13px] font-bold text-primary">
@@ -176,6 +167,15 @@ export function ProductCard({
                 />
               </span>
             </div>
+
+            {/* Description */}
+            {product.description?.replace(/<[^>]*>/g, "").trim() ? (
+              <p className="mt-2 min-w-0 line-clamp-2 overflow-hidden text-sm leading-[18px] text-[#6b7280]">
+                {product.description?.replace(/<[^>]*>/g, "").trim()}
+              </p>
+            ) : (
+              <div className="" />
+            )}
 
             {/* Bottom row */}
             <div className="mt-auto flex items-center pt-2">
