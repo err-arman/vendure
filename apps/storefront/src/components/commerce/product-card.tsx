@@ -154,7 +154,7 @@ export function ProductCard({
             className="flex min-w-0 flex-1 flex-col pr-3"
           >
             {/* Product name */}
-            <h3 className="line-clamp-1 text-[15px] font-bold leading-[20px] text-[#111827]">
+            <h3 className="text-[14px] font-semibold leading-[20px] text-[#111827]">
               {product.productName}
             </h3>
 
