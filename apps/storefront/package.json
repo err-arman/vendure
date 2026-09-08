@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "cp-build": "rm -rf /media/arman/E/project/my-shop/server-deploy-file/standalone /media/arman/E/project/my-shop/server-deploy-file/standalone.tar.gz && cp -r /media/arman/E/project/my-shop/apps/storefront/.next/standalone /media/arman/E/project/my-shop/server-deploy-file && cp -r /media/arman/E/project/my-shop/apps/storefront/public /media/arman/E/project/my-shop/server-deploy-file/standalone/apps/storefront/ && cp -r /media/arman/E/project/my-shop/apps/storefront/.next/static /media/arman/E/project/my-shop/server-deploy-file/standalone/apps/storefront/.next/ && tar -czvf /media/arman/E/project/my-shop/server-deploy-file/standalone.tar.gz -C /media/arman/E/project/my-shop/server-deploy-file standalone"
   },
   "dependencies": {
     "@base-ui/react": "^1.3.0",
