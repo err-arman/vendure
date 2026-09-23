@@ -5,16 +5,20 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const heroImages = [
   {
-    src: null,
-    alt: "East Bengal Coffee Roasters logo on a white background",
+    src: "/images/ethopia.jpeg",
+    alt: "Ethiopian coffee",
   },
   {
-    src: "/images/espresso_signature.jpeg",
+    src: "/images/chimbuk.jpeg",
     alt: "Signature espresso",
   },
   {
-    src: "/images/ethopia.jpeg",
-    alt: "Ethiopian coffee",
+    src: "/images/cluster.jpeg",
+    alt: "cluster",
+  },
+  {
+    src: null,
+    alt: "East Bengal Coffee Roasters logo on a white background",
   },
 ];
 
@@ -70,7 +74,7 @@ export function HeroSection() {
               key="white-slide"
               aria-label={image.alt}
               aria-hidden={index !== activeIndex}
-              className={`absolute inset-0 bg-black transition-opacity duration-700 ${
+              className={`absolute inset-0 bg-white transition-opacity duration-700 ${
                 index === activeIndex ? "opacity-100 z-10" : "opacity-0 z-0"
               }`}
             />
@@ -80,7 +84,7 @@ export function HeroSection() {
 
       <div className="absolute inset-0 bg-black/15" />
 
-      {activeIndex === 0 && (
+      {activeIndex === 3 && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center">
           <div className="flex items-center justify-center">
             <div className="relative w-64 h-64 md:w-72 md:h-72 lg:w-[470px] lg:h-[470px]">
@@ -96,7 +100,7 @@ export function HeroSection() {
         </div>
       )}
 
-      <button
+      {/* <button
         type="button"
         onClick={showPrevious}
         aria-label="Previous hero image"
@@ -111,9 +115,9 @@ export function HeroSection() {
         className="absolute right-4 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-slate-900 shadow-md transition hover:bg-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black/20"
       >
         <ChevronRight size={22} aria-hidden="true" />
-      </button>
+      </button> */}
 
-      {/* <div className="absolute bottom-2 left-1/2 z-20 flex -translate-x-1/2 gap-2">
+      <div className="absolute bottom-2 left-1/2 z-20 flex -translate-x-1/2 gap-2">
         {heroImages.map((image, index) => (
           <button
             key={image.src || `slide-${index}`}
@@ -128,7 +132,7 @@ export function HeroSection() {
             }`}
           />
         ))}
-      </div> */}
+      </div>
     </section>
   );
 }
