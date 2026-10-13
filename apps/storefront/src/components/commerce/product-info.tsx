@@ -12,6 +12,15 @@ import {addToCart} from '@/app/[locale]/product/[slug]/actions';
 import {toast} from 'sonner';
 import {Price} from '@/components/commerce/price';
 import {useTranslations} from 'next-intl';
+import {
+    CONDITIONAL_OPTION_RULES,
+    findConditionalVariant,
+    getDisplayOptions,
+    getVisibleOptionGroups,
+    normalizeOptionCode,
+    withGrindDefaults,
+    type ConditionalOptionRule,
+} from '@/lib/vendure/conditional-options';
 
 interface ProductInfoProps {
     product: {
@@ -49,9 +58,10 @@ interface ProductInfoProps {
     };
     searchParams: { [key: string]: string | string[] | undefined };
     currencyCode: string;
+    conditionalRules?: ConditionalOptionRule[];
 }
 
-export function ProductInfo({product, searchParams, currencyCode}: ProductInfoProps) {
+export function ProductInfo({product, searchParams, currencyCode, conditionalRules = CONDITIONAL_OPTION_RULES}: ProductInfoProps) {
     const t = useTranslations('Product');
     const pathname = usePathname();
     const router = useRouter();
@@ -59,58 +69,93 @@ export function ProductInfo({product, searchParams, currencyCode}: ProductInfoPr
     const [isPending, startTransition] = useTransition();
     const [isAdded, setIsAdded] = useState(false);
 
-    // Initialize selected options from URL
+    // Initialize selected options from URL, applying conditional defaults
+    // (Grind == Whole auto-selects the hidden `None` size; Grind Size stays
+    // hidden until Ground is chosen). Group/option lookup is normalized
+    // (case-insensitive, spaces/underscores as dashes).
     const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
         const initialOptions: Record<string, string> = {};
 
+        const normalizedParams = new Map<string, string>();
+        for (const [key, value] of Object.entries(searchParams)) {
+            const first = Array.isArray(value) ? value[0] : value;
+            if (typeof first === 'string') {
+                normalizedParams.set(normalizeOptionCode(key), first);
+            }
+        }
+
         // Load from URL search params
         product.optionGroups.forEach((group) => {
-            const paramValue = searchParams[group.code];
+            const paramValue =
+                normalizedParams.get(normalizeOptionCode(group.code)) ??
+                (group.name ? normalizedParams.get(normalizeOptionCode(group.name)) : undefined);
             if (typeof paramValue === 'string') {
-                // Find the option by code
-                const option = group.options.find((opt) => opt.code === paramValue);
+                const normalizedValue = normalizeOptionCode(paramValue);
+                const option = group.options.find(
+                    (opt) =>
+                        normalizeOptionCode(opt.code) === normalizedValue ||
+                        (opt.name !== undefined && normalizeOptionCode(opt.name) === normalizedValue),
+                );
                 if (option) {
                     initialOptions[group.id] = option.id;
                 }
             }
         });
 
-        return initialOptions;
+        return withGrindDefaults(product.optionGroups, initialOptions, conditionalRules);
     });
 
-    // Find the matching variant based on selected options
+    // Visible groups after applying conditional rules (Grind Size only for
+    // Ground). Unaffected products render all groups.
+    const visibleGroups = useMemo(
+        () => getVisibleOptionGroups(product.optionGroups, selectedOptions, conditionalRules),
+        [product.optionGroups, selectedOptions, conditionalRules],
+    );
+
+    // Find the matching variant for the applicable selections only. A hidden
+    // Grind Size auto-selected to `None` still participates in matching.
     const selectedVariant = useMemo(() => {
         if (product.variants.length === 1) {
-            return product.variants[0];
+            return product.variants[0] ?? null;
         }
 
-        // If not all option groups have a selection, return null
-        if (Object.keys(selectedOptions).length !== product.optionGroups.length) {
-            return null;
-        }
-
-        // Find variant that matches all selected options
-        return product.variants.find((variant) => {
-            const variantOptionIds = variant.options.map((opt) => opt.id);
-            const selectedOptionIds = Object.values(selectedOptions);
-            return selectedOptionIds.every((optId) => variantOptionIds.includes(optId));
-        });
-    }, [selectedOptions, product.variants, product.optionGroups]);
+        return findConditionalVariant(product.optionGroups, product.variants, selectedOptions, conditionalRules) ?? null;
+    }, [selectedOptions, product.variants, product.optionGroups, conditionalRules]);
 
     const handleOptionChange = (groupId: string, optionId: string) => {
-        setSelectedOptions((prev) => ({
-            ...prev,
-            [groupId]: optionId,
-        }));
+        const next = withGrindDefaults(
+            product.optionGroups,
+            {...selectedOptions, [groupId]: optionId},
+            conditionalRules,
+        );
+        setSelectedOptions(next);
 
         // Find the option group and option to get their codes
         const group = product.optionGroups.find((g) => g.id === groupId);
         const option = group?.options.find((opt) => opt.id === optionId);
 
         if (group && option) {
-            // Update URL with option code
+            // Update URL with option code and drop params for newly hidden
+            // groups (matched by normalized alias so stale params can't linger).
             const params = new URLSearchParams(currentSearchParams);
             params.set(group.code, option.code);
+            const groupById = new Map(product.optionGroups.map((g) => [g.id, g] as const));
+            for (const knownGroupId of Object.keys(selectedOptions)) {
+                if (!(knownGroupId in next)) {
+                    const hiddenGroup = groupById.get(knownGroupId);
+                    if (!hiddenGroup) continue;
+                    const aliases = new Set(
+                        [hiddenGroup.code, hiddenGroup.name]
+                            .filter((v): v is string => typeof v === 'string')
+                            .map((v) => normalizeOptionCode(v)),
+                    );
+                    for (const key of Array.from(params.keys())) {
+                        if (aliases.has(normalizeOptionCode(key))) {
+                            params.delete(key);
+                        }
+                    }
+                }
+            }
             router.push(`${pathname}?${params.toString()}`, {scroll: false});
         }
     };
@@ -159,10 +204,10 @@ export function ProductInfo({product, searchParams, currencyCode}: ProductInfoPr
                 <div dangerouslySetInnerHTML={{__html: product.description}}/>
             </div>
 
-            {/* Option Groups */}
-            {product.optionGroups.length > 0 && (
+            {/* Option Groups (conditionally visible; `None` size hidden for Ground) */}
+            {visibleGroups.length > 0 && (
                 <div className="space-y-5">
-                    {product.optionGroups.map((group) => (
+                    {visibleGroups.map((group) => (
                         <div key={group.id} className="space-y-3">
                             <Label className="text-base font-semibold">
                                 {group.name}
@@ -172,7 +217,7 @@ export function ProductInfo({product, searchParams, currencyCode}: ProductInfoPr
                                 onValueChange={(value) => handleOptionChange(group.id, value)}
                             >
                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                    {group.options.map((option) => (
+                                    {getDisplayOptions(group, product.optionGroups, selectedOptions, conditionalRules).map((option) => (
                                         <div key={option.id}>
                                             <RadioGroupItem
                                                 value={option.id}
@@ -229,7 +274,7 @@ export function ProductInfo({product, searchParams, currencyCode}: ProductInfoPr
                             <ShoppingCart className="mr-2 h-5 w-5"/>
                             {isPending
                                 ? t('adding')
-                                : !selectedVariant && product.optionGroups.length > 0
+                                : !selectedVariant && visibleGroups.length > 0
                                     ? t('selectOptions')
                                     : !isInStock
                                         ? t('outOfStock')

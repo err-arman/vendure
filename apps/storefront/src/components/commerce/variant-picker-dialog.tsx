@@ -15,6 +15,14 @@ import { useTranslations } from "next-intl";
 import { CheckCircle2, Loader2, Minus, Plus, ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/components/providers/cart-provider";
+import {
+  CONDITIONAL_OPTION_RULES,
+  findConditionalVariant,
+  getDisplayOptions,
+  getVisibleOptionGroups,
+  withGrindDefaults,
+  type ConditionalOptionRule,
+} from "@/lib/vendure/conditional-options";
 
 interface VariantPickerDialogProps {
   open: boolean;
@@ -22,6 +30,7 @@ interface VariantPickerDialogProps {
   productSlug: string;
   currencyCode?: string;
   onAdded?: () => void;
+  conditionalRules?: ConditionalOptionRule[];
 }
 
 export function VariantPickerDialog({
@@ -30,6 +39,7 @@ export function VariantPickerDialog({
   productSlug,
   currencyCode,
   onAdded,
+  conditionalRules = CONDITIONAL_OPTION_RULES,
 }: VariantPickerDialogProps) {
   const t = useTranslations("Product");
   const { refresh } = useCart();
@@ -61,19 +71,39 @@ export function VariantPickerDialog({
       .finally(() => setLoading(false));
   }, [open, productSlug]);
 
+  // Visible groups after conditional rules (Grind Size only for Ground).
+  const visibleGroups = useMemo(() => {
+    if (!product) return [];
+    return getVisibleOptionGroups(
+      product.optionGroups,
+      selectedOptions,
+      conditionalRules,
+    );
+  }, [product, selectedOptions, conditionalRules]);
+
   const selectedVariant = useMemo(() => {
     if (!product) return null;
     if (product.variants.length === 1) return product.variants[0];
-    if (Object.keys(selectedOptions).length !== product.optionGroups.length) {
-      return null;
-    }
-    const selectedIds = Object.values(selectedOptions);
     return (
-      product.variants.find((variant) =>
-        selectedIds.every((id) => variant.options.some((opt) => opt.id === id)),
+      findConditionalVariant(
+        product.optionGroups,
+        product.variants,
+        selectedOptions,
+        conditionalRules,
       ) ?? null
     );
-  }, [product, selectedOptions]);
+  }, [product, selectedOptions, conditionalRules]);
+
+  const handleOptionSelect = (groupId: string, optionId: string) => {
+    if (!product) return;
+    setSelectedOptions((prev) =>
+      withGrindDefaults(
+        product.optionGroups,
+        { ...prev, [groupId]: optionId },
+        conditionalRules,
+      ),
+    );
+  };
 
   const inStock =
     selectedVariant && selectedVariant.stockLevel !== "OUT_OF_STOCK";
@@ -113,15 +143,16 @@ export function VariantPickerDialog({
       <DialogContent
         className="
     top-1/2 left-1/2
-    flex
-    max-h-[90dvh]
+    block
+    max-h-[80vh]
+    supports-[height:100svh]:max-h-[80svh]
     w-[95vw]
     max-w-md
-    flex-col
+    touch-pan-y
     -translate-x-1/2
     -translate-y-1/2
-    gap-0
-    overflow-hidden
+    overflow-y-auto
+    overscroll-contain
     rounded-2xl
     p-0
   "
@@ -146,26 +177,25 @@ export function VariantPickerDialog({
         ) : (
           <>
             {/* HEADER */}
-            <div className="shrink-0 border-b bg-background px-5 py-4">
-              <DialogTitle className="pr-8 text-lg font-semibold leading-tight">
-                {product.name}
-              </DialogTitle>
-            </div>
+              <div className="border-b bg-background px-4 py-4 sm:px-5">
+                <DialogTitle className="pr-8 text-lg font-semibold leading-tight">
+                  {product.name}
+                </DialogTitle>
+              </div>
 
-            {/* SCROLLABLE CONTENT */}
-            <div className="grow min-h-0 overflow-y-auto px-5 py-5">
+              <div className="px-4 py-4 sm:px-5 sm:py-5">
               {/* IMAGE */}
-              <div className="mb-6 overflow-hidden rounded-xl bg-muted">
+              <div className="mb-4 overflow-hidden rounded-xl bg-muted sm:mb-6">
                 {product.asset ? (
                   <Image
                     src={product.asset}
                     alt={product.name}
                     width={600}
                     height={600}
-                    className="mx-auto h-40 w-auto object-contain sm:h-48"
+                    className="mx-auto h-28 w-auto object-contain sm:h-48"
                   />
                 ) : (
-                  <div className="flex h-40 items-center justify-center text-muted-foreground">
+                  <div className="flex h-28 items-center justify-center text-muted-foreground sm:h-40">
                     {t("noImage")}
                   </div>
                 )}
@@ -187,14 +217,19 @@ export function VariantPickerDialog({
                 )}
               </div>
 
-              {/* OPTIONS */}
+              {/* OPTIONS (conditionally visible; `None` size hidden for Ground) */}
               <div className="space-y-6">
-                {product.optionGroups.map((group) => (
+                {visibleGroups.map((group) => (
                   <div key={group.id}>
                     <p className="mb-3 text-sm font-semibold">{group.name}</p>
 
                     <div className="flex flex-wrap gap-2">
-                      {group.options.map((option) => {
+                      {getDisplayOptions(
+                        group,
+                        product.optionGroups,
+                        selectedOptions,
+                        conditionalRules,
+                      ).map((option) => {
                         const selected =
                           selectedOptions[group.id] === option.id;
 
@@ -202,19 +237,14 @@ export function VariantPickerDialog({
                           <button
                             key={option.id}
                             type="button"
-                            onClick={() =>
-                              setSelectedOptions((prev) => ({
-                                ...prev,
-                                [group.id]: option.id,
-                              }))
-                            }
-                            className={`min-h-10 max-w-full rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+                            onClick={() => handleOptionSelect(group.id, option.id)}
+                            className={`min-h-10 max-w-full rounded-full border px-4 py-2 text-center text-sm font-medium leading-snug transition-colors ${
                               selected
                                 ? "border-primary bg-primary text-primary-foreground"
                                 : "border-border bg-background hover:border-primary/50"
                             }`}
                           >
-                            <span className="block max-w-[140px] truncate">
+                            <span className="block break-words">
                               {option.name}
                             </span>
                           </button>
@@ -261,8 +291,8 @@ export function VariantPickerDialog({
               </div>
             </div>
 
-            {/* STICKY FOOTER */}
-            <div className="shrink-0 border-t bg-background p-4">
+              {/* FOOTER (scrolls with the content) */}
+              <div className="border-t bg-background p-4">
                 {selectedVariant && (
                   <div className="mb-3 flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">
@@ -295,7 +325,7 @@ export function VariantPickerDialog({
 
                     {isPending
                       ? t("adding")
-                      : !selectedVariant && product.optionGroups.length > 0
+                      : !selectedVariant && visibleGroups.length > 0
                         ? t("selectOptions")
                         : !inStock
                           ? t("outOfStock")
@@ -303,7 +333,7 @@ export function VariantPickerDialog({
                   </>
                 )}
               </Button>
-            </div>
+              </div>
           </>
         )}
       </DialogContent>
