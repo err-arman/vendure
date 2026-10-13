@@ -16,10 +16,10 @@ const heroImages = [
     src: "/images/cluster.jpeg",
     alt: "cluster",
   },
-  {
-    src: null,
-    alt: "East Bengal Coffee Roasters logo on a white background",
-  },
+  // {
+  //   src: null,
+  //   alt: "East Bengal Coffee Roasters logo on a white background",
+  // },
 ];
 
 export function HeroSection() {
@@ -84,21 +84,13 @@ export function HeroSection() {
 
       <div className="absolute inset-0 bg-black/15" />
 
-      {activeIndex === 3 && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center">
-          <div className="flex items-center justify-center">
-            <div className="relative w-64 h-64 md:w-72 md:h-72 lg:w-[470px] lg:h-[470px]">
-              <div className="absolute inset-0 bg-gradient-to-b from-indigo-900/80 to-indigo-900/80 rounded-full border-indigo-500 shadow-2xl flex flex-col items-center justify-center">
-                <img
-                  src="/ecbr-logo.png"
-                  alt="East Bengal Coffee Roasters"
-                  className="w-40 h-auto lg:w-80 lg:h-auto object-contain"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+        <img
+          src="/ecbr-logo.png"
+          alt="East Bengal Coffee Roasters"
+          className="w-36 h-auto object-contain opacity-50 drop-shadow-2xl md:w-44 lg:w-60"
+        />
+      </div>
 
       {/* <button
         type="button"
