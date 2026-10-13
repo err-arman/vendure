@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { usePathname } from "@/i18n/navigation";
 import {
   addFirstVariantToCart,
   getActiveOrderProductIds,
@@ -21,14 +22,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [itemCount, setItemCount] = useState(0);
 
   const refresh = useCallback(async () => {
-    const { ids, totalQuantity } = await getActiveOrderProductIds();
-    setProductIds(new Set(ids));
-    setItemCount(totalQuantity);
+    try {
+      const { ids, totalQuantity } = await getActiveOrderProductIds();
+      setProductIds(new Set(ids));
+      setItemCount(totalQuantity);
+    } catch {
+      // Keep previous state: a failed read must never fake an empty cart
+      // (nor wipe a truthful tick-mark).
+    }
   }, []);
 
+  const pathname = usePathname();
+
+  // Sync on mount and after every client-side navigation, so state can never
+  // go stale when the cart changes elsewhere (cart page edits, checkout).
   useEffect(() => {
     refresh();
-  }, [refresh]);
+  }, [pathname, refresh]);
 
   const isInCart = useCallback(
     (productId: string) => productIds.has(productId),
@@ -39,12 +49,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     async (productId: string) => {
       const result = await addFirstVariantToCart(productId);
       if (result.success) {
-        setProductIds((prev) => new Set(prev).add(productId));
+        // Re-read server truth instead of optimistically guessing, so the
+        // tick-mark and itemCount can never disagree with the cart.
+        await refresh();
         return true;
       }
       return false;
     },
-    [],
+    [refresh],
   );
 
   const value = useMemo(
