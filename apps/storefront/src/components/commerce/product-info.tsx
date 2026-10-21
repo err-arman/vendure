@@ -7,7 +7,7 @@ import {Button} from '@/components/ui/button';
 import {Label} from '@/components/ui/label';
 import {RadioGroup, RadioGroupItem} from '@/components/ui/radio-group';
 import {Separator} from '@/components/ui/separator';
-import {ShoppingCart, CheckCircle2} from 'lucide-react';
+import {ShoppingCart, CheckCircle2, Check} from 'lucide-react';
 import {addToCart} from '@/app/[locale]/product/[slug]/actions';
 import {toast} from 'sonner';
 import {Price} from '@/components/commerce/price';
@@ -17,6 +17,7 @@ import {
     findConditionalVariant,
     getDisplayOptions,
     getVisibleOptionGroups,
+    isConditionalChildGroup,
     normalizeOptionCode,
     withGrindDefaults,
     type ConditionalOptionRule,
@@ -207,7 +208,51 @@ export function ProductInfo({product, searchParams, currencyCode, conditionalRul
             {/* Option Groups (conditionally visible; `None` size hidden for Ground) */}
             {visibleGroups.length > 0 && (
                 <div className="space-y-5">
-                    {visibleGroups.map((group) => (
+                    {visibleGroups.map((group) => {
+                        const displayOptions = getDisplayOptions(group, product.optionGroups, selectedOptions, conditionalRules);
+
+                        // Dependent groups (e.g. Grind Size) render as
+                        // responsive selection cards; all other groups keep
+                        // the existing segmented radio buttons.
+                        if (isConditionalChildGroup(group, conditionalRules)) {
+                            return (
+                                <div key={group.id} className="space-y-3">
+                                    <Label className="text-base font-semibold">
+                                        {group.name}
+                                    </Label>
+                                    <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3">
+                                        {displayOptions.map((option) => {
+                                            const selected = selectedOptions[group.id] === option.id;
+                                            return (
+                                                <button
+                                                    key={option.id}
+                                                    type="button"
+                                                    aria-pressed={selected}
+                                                    onClick={() => handleOptionChange(group.id, option.id)}
+                                                    className={`relative flex min-h-18 w-full flex-col items-center justify-center gap-0.5 rounded-xl border px-6 py-3 text-center text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 ${
+                                                        selected
+                                                            ? 'border-sky-500 bg-sky-50 font-medium text-gray-900 ring-1 ring-sky-500 dark:bg-sky-950/50 dark:text-foreground'
+                                                            : 'border-gray-200 bg-background text-gray-900 hover:border-sky-400 hover:bg-sky-50/50 dark:border-border dark:text-foreground dark:hover:bg-sky-950/30'
+                                                    }`}
+                                                >
+                                                    <span className="break-words">{option.name}</span>
+                                                    {selected && (
+                                                        <span
+                                                            aria-hidden="true"
+                                                            className="absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded-full bg-sky-500 text-white"
+                                                        >
+                                                            <Check className="h-3.5 w-3.5" />
+                                                        </span>
+                                                    )}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            );
+                        }
+
+                        return (
                         <div key={group.id} className="space-y-3">
                             <Label className="text-base font-semibold">
                                 {group.name}
@@ -217,7 +262,7 @@ export function ProductInfo({product, searchParams, currencyCode, conditionalRul
                                 onValueChange={(value) => handleOptionChange(group.id, value)}
                             >
                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                    {getDisplayOptions(group, product.optionGroups, selectedOptions, conditionalRules).map((option) => (
+                                    {displayOptions.map((option) => (
                                         <div key={option.id}>
                                             <RadioGroupItem
                                                 value={option.id}
@@ -235,7 +280,8 @@ export function ProductInfo({product, searchParams, currencyCode, conditionalRul
                                 </div>
                             </RadioGroup>
                         </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
 

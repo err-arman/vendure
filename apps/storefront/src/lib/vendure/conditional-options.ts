@@ -169,6 +169,18 @@ export function getVisibleOptionGroups<T extends OptionGroupLike>(
 }
 
 /**
+ * True when the group is a conditional child in the given rules (e.g. Grind
+ * Size only applies once its parent option is selected). Derived from the
+ * rules data — no variant names are matched here.
+ */
+export function isConditionalChildGroup<T extends OptionGroupLike>(
+    group: T,
+    rules: ConditionalOptionRule[] = CONDITIONAL_OPTION_RULES,
+): boolean {
+    return rules.some((rule) => groupMatches(group, rule.childGroupCode));
+}
+
+/**
  * Options to render for one group. When a conditional child (Grind Size) is
  * visible — i.e. Grind == Ground — the `None` placeholder is filtered out,
  * since it exists only for Whole. In every other case all options render.
