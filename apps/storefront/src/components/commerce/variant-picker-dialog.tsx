@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Price } from "@/components/commerce/price";
+import { WhatsAppButton } from "@/components/commerce/whatsapp-button";
 import {
   getProductForPicker,
   addVariantToCart,
@@ -308,31 +309,38 @@ export function VariantPickerDialog({
                   </div>
                 )}
 
-                <Button
-                size="lg"
-                className="h-12 w-full rounded-xl text-base font-semibold"
-                disabled={!canAdd || isPending}
-                onClick={handleAdd}
-              >
-                {isAdded ? (
-                  <>
-                    <CheckCircle2 className="mr-2 h-5 w-5" />
-                    {t("addedToCart")}
-                  </>
-                ) : (
-                  <>
-                    <ShoppingCart className="mr-2 h-5 w-5" />
+                <div className="space-y-2">
+                  <Button
+                    size="lg"
+                    className="h-12 w-full rounded-xl text-base font-semibold"
+                    disabled={!canAdd || isPending}
+                    onClick={handleAdd}
+                  >
+                    {isAdded ? (
+                      <>
+                        <CheckCircle2 className="mr-2 h-5 w-5" />
+                        {t("addedToCart")}
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingCart className="mr-2 h-5 w-5" />
 
-                    {isPending
-                      ? t("adding")
-                      : !selectedVariant && visibleGroups.length > 0
-                        ? t("selectOptions")
-                        : !inStock
-                          ? t("outOfStock")
-                          : t("addToCart")}
-                  </>
-                )}
-              </Button>
+                        {isPending
+                          ? t("adding")
+                          : !selectedVariant && visibleGroups.length > 0
+                            ? t("selectOptions")
+                            : !inStock
+                              ? t("outOfStock")
+                              : t("addToCart")}
+                      </>
+                    )}
+                  </Button>
+
+                  <WhatsAppButton
+                    productSlug={productSlug}
+                    className="h-12 w-full rounded-xl"
+                  />
+                </div>
               </div>
           </>
         )}

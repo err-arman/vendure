@@ -64,6 +64,8 @@
         "increaseQuantity": "Increase quantity",
         "addedToCartMessage": "Added to cart",
         "addedToCartDescription": "{name} has been added to your cart",
+        "whatsappLabel": "Ask on WhatsApp",
+        "whatsappMessage": "Hi! I'm interested in this product: {url}",
         "errorTitle": "Error",
         "errorAddToCart": "Failed to add item to cart",
         "sku": "SKU: {sku}",

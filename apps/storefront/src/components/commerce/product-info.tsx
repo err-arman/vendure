@@ -9,6 +9,7 @@ import {RadioGroup, RadioGroupItem} from '@/components/ui/radio-group';
 import {Separator} from '@/components/ui/separator';
 import {ShoppingCart, CheckCircle2, Check} from 'lucide-react';
 import {addToCart} from '@/app/[locale]/product/[slug]/actions';
+import {WhatsAppButton} from '@/components/commerce/whatsapp-button';
 import {toast} from 'sonner';
 import {Price} from '@/components/commerce/price';
 import {useTranslations} from 'next-intl';
@@ -27,6 +28,7 @@ interface ProductInfoProps {
     product: {
         id: string;
         name: string;
+        slug: string;
         description: string;
         variants: Array<{
             id: string;
@@ -328,6 +330,12 @@ export function ProductInfo({product, searchParams, currencyCode, conditionalRul
                         </>
                     )}
                 </Button>
+
+                <WhatsAppButton
+                    productSlug={product.slug}
+                    useCurrentUrl
+                    className="w-full h-12 rounded-lg"
+                />
             </div>
 
             {/* SKU */}
