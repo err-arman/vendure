@@ -143,15 +143,16 @@ export function VariantPickerDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="
-    top-1/2 left-1/2
+    inset-0
+    translate-x-0 translate-y-0
+    mx-auto my-auto
+    h-fit
     block
-    max-h-[80vh]
-    supports-[height:100svh]:max-h-[80svh]
+    max-h-[85vh]
+    supports-[height:100svh]:max-h-[85svh]
     w-[95vw]
     max-w-md
     touch-pan-y
-    -translate-x-1/2
-    -translate-y-1/2
     overflow-y-auto
     overscroll-contain
     rounded-2xl
@@ -163,7 +164,7 @@ export function VariantPickerDialog({
           <>
             <DialogTitle className="sr-only">{t("selectOptions")}</DialogTitle>
 
-            <div className="flex h-full items-center justify-center">
+            <div className="flex min-h-48 items-center justify-center">
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           </>
@@ -171,7 +172,7 @@ export function VariantPickerDialog({
           <>
             <DialogTitle className="sr-only">{t("errorTitle")}</DialogTitle>
 
-            <div className="flex h-full items-center justify-center p-6 text-center text-sm text-muted-foreground">
+            <div className="flex min-h-48 items-center justify-center p-6 text-center text-sm text-muted-foreground">
               {t("errorAddToCart")}
             </div>
           </>
