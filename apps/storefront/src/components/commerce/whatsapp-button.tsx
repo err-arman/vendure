@@ -22,14 +22,22 @@ interface WhatsAppButtonProps {
   useCurrentUrl?: boolean;
   /* Render only the WhatsApp glyph (icon square), relying on aria-label. */
   iconOnly?: boolean;
+  /* Compact pill: label followed by a small circular WhatsApp badge. */
+  compact?: boolean;
+  /* Override the visible label (defaults to the full "Ask on WhatsApp" text). */
+  label?: string;
   className?: string;
+  iconClassName?: string;
 }
 
 export function WhatsAppButton({
   productSlug,
   useCurrentUrl = false,
   iconOnly = false,
+  compact = false,
+  label,
   className,
+  iconClassName = "h-5 w-5",
 }: WhatsAppButtonProps) {
   const t = useTranslations("Product");
   const locale = useLocale();
@@ -57,6 +65,8 @@ export function WhatsAppButton({
     return null;
   }
 
+  const visibleLabel = label ?? t("whatsappLabel");
+
   return (
     <Button
       type="button"
@@ -65,8 +75,19 @@ export function WhatsAppButton({
       aria-label={t("whatsappLabel")}
       className={className}
     >
-      <WhatsAppGlyph className="h-5 w-5 text-[#25D366]" />
-      {!iconOnly && <span className="truncate">{t("whatsappLabel")}</span>}
+      {compact ? (
+        <>
+          <span>{visibleLabel}</span>
+          <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white">
+            <WhatsAppGlyph className="size-3 text-[#25D366]" />
+          </span>
+        </>
+      ) : (
+        <>
+          <WhatsAppGlyph className={`${iconClassName} text-[#25D366]`} />
+          {!iconOnly && <span className="truncate">{visibleLabel}</span>}
+        </>
+      )}
     </Button>
   );
 }

@@ -7,6 +7,7 @@ import { Price } from "@/components/commerce/price";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { ProductCardAction } from "@/components/commerce/product-card-action";
+import { WhatsAppButton } from "@/components/commerce/whatsapp-button";
 
 interface ProductCardProps {
   product: FragmentOf<typeof ProductCardFragment> | null | undefined;
@@ -75,7 +76,7 @@ export function ProductCard({
           <Link href={productHref} className="block w-full">
             <div className="overflow-hidden rounded-xl bg-[#f1f5f9]">
               {/* Product name */}
-              <div className="px-3 pb-1 pt-2">
+              <div className="px-20 pb-1 pt-2">
                 <p className="text-center text-sm font-bold uppercase tracking-wide text-[#111827]">
                   {product.productName}
                 </p>
@@ -122,6 +123,14 @@ export function ProductCard({
               </div>
             </div>
           </Link>
+
+          {/* Desktop WhatsApp ask button */}
+          <WhatsAppButton
+            productSlug={product.slug}
+            compact
+            label={t("whatsappAskIn")}
+            className="absolute right-3 top-1 z-30 h-7 gap-1 rounded-full border-0 bg-[#D9E4DD] px-2 text-[11px] font-semibold text-black shadow-none hover:bg-[#C0C8B6] dark:bg-muted dark:text-foreground dark:hover:bg-muted/80"
+          />
 
           {/* Desktop cart button */}
           <ProductCardAction
@@ -171,7 +180,12 @@ export function ProductCard({
             {/* Description */}
             {product.description?.replace(/<[^>]*>/g, "").trim() ? (
               <p className="mt-2 min-w-0 line-clamp-2 overflow-hidden text-sm leading-[18px] text-[#6b7280]">
-                {product.description?.replace(/<[^>]*>/g, "").trim()}
+                {product.description?.replace(/<[^>]*>/g, "").trim()} <WhatsAppButton
+                productSlug={product.slug}
+                compact
+                label={t("whatsappAskIn")}
+                className="ml-auto h-7 gap-1 rounded-full border-0 bg-[#f3f4f6] px-2 text-[11px] font-semibold text-black shadow-none hover:bg-[#e5e7eb] dark:bg-muted dark:text-foreground dark:hover:bg-muted/80"
+              />
               </p>
             ) : (
               <div className="" />

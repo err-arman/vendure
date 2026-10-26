@@ -88,7 +88,7 @@ export function HeroSection() {
         <img
           src="/ecbr-logo.png"
           alt="East Bengal Coffee Roasters"
-          className="w-36 h-auto object-contain opacity-50 drop-shadow-2xl md:w-44 lg:w-60"
+          className="w-36 h-auto object-contain drop-shadow-2xl md:w-44 lg:w-60"
         />
       </div>
 

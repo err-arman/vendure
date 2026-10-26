@@ -65,6 +65,7 @@
         "addedToCartMessage": "In den Warenkorb gelegt",
         "addedToCartDescription": "{name} wurde Ihrem Warenkorb hinzugefügt",
         "whatsappLabel": "Auf WhatsApp fragen",
+        "whatsappAskIn": "Fragen in",
         "whatsappMessage": "Hallo! Ich interessiere mich für dieses Produkt: {url}",
         "errorTitle": "Fehler",
         "errorAddToCart": "Artikel konnte nicht zum Warenkorb hinzugefügt werden",
