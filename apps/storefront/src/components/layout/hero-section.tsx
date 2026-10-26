@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const heroImages = [
   {
-    src: "/images/ethopia.jpeg",
+    src: "/images/ethiopia.jpeg",
     alt: "Ethiopian coffee",
   },
   {
@@ -13,7 +12,7 @@ const heroImages = [
     alt: "Signature espresso",
   },
   {
-    src: "/images/cluster.jpeg",
+    src: "/images/hero3.jpeg",
     alt: "cluster",
   },
   // {
