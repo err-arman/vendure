@@ -187,14 +187,14 @@ export function ProductCard({
                   </p>
                 </Link>
               ) : null}
-              <div className="pointer-events-none absolute right-0 bottom-0 flex h-7 items-center bg-gradient-to-l from-white via-white to-transparent pl-3">
+              {/* <div className="pointer-events-none absolute right-0 bottom-0 flex h-7 items-center bg-gradient-to-l from-white via-white to-transparent pl-3">
                 <WhatsAppButton
                   productSlug={product.slug}
                   compact
                   label={t("whatsappAskIn")}
                   className="pointer-events-auto h-7 shrink-0 gap-1 rounded-full border-0 bg-[#f3f4f6] px-2 text-[11px] font-semibold text-black shadow-none hover:bg-[#e5e7eb] dark:bg-muted dark:text-foreground dark:hover:bg-muted/80"
                 />
-              </div>
+              </div> */}
             </div>
 
             {/* Bottom row */}
@@ -208,7 +208,7 @@ export function ProductCard({
           </div>
 
           {/* Right image */}
-          <div className="relative w-[110px] shrink-0">
+          <div className="relative w-[110px] shrink-0 self-start">
             <Link href={productHref} className="block">
               <div className="relative aspect-square overflow-hidden rounded-xl bg-[#f3f4f6]">
                 {product.productAsset ? (
@@ -226,9 +226,13 @@ export function ProductCard({
                 )}
               </div>
             </Link>
-
-            {/* Add button */}
-            <div className="absolute bottom-2 right-2">
+            {/* Action buttons — half over the image bottom edge */}
+            <div className="absolute inset-x-0 bottom-1.5 z-10 flex translate-y-1/2 items-center justify-between">
+              <WhatsAppButton
+                productSlug={product.slug}
+                iconOnly
+                className="h-9 w-9 shrink-0 rounded-full border-0 bg-[#f3f4f6] p-0 text-black shadow-md hover:bg-[#e5e7eb] dark:bg-muted dark:text-foreground dark:hover:bg-muted/80"
+              />
               <ProductCardAction
                 productId={product.productId}
                 productSlug={product.slug}

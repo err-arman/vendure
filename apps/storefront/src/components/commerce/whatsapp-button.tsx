@@ -77,7 +77,7 @@ export function WhatsAppButton({
     >
       {compact ? (
         <>
-          <span>{visibleLabel}</span>
+          {/* <span>{visibleLabel}</span> */}
           <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white">
             <WhatsAppGlyph className="size-3 text-[#25D366]" />
           </span>
