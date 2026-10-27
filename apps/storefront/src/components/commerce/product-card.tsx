@@ -40,6 +40,8 @@ export function ProductCard({
         ? (priceWithTax.value ?? 0)
         : 0;
 
+  const descriptionText = product.description?.replace(/<[^>]*>/g, "").trim();
+
   const desktopPriceLabel =
     priceWithTax?.__typename === "PriceRange" ? (
       priceWithTax.min !== priceWithTax.max ? (
@@ -158,38 +160,42 @@ export function ProductCard({
       <div className="block md:hidden">
         <div className="flex w-full rounded-2xl border border-[#e5e7eb] bg-white p-3">
           {/* Left content */}
-          <Link
-            href={productHref}
-            className="flex min-w-0 flex-1 flex-col pr-3"
-          >
-            {/* Product name */}
-            <h3 className="text-[14px] font-semibold leading-[20px] text-[#111827]">
-              {product.productName}
-            </h3>
+          <div className="flex min-w-0 flex-1 flex-col pr-3">
+            <Link href={productHref} className="flex min-w-0 flex-col">
+              {/* Product name */}
+              <h3 className="text-[14px] font-semibold leading-[20px] text-[#111827]">
+                {product.productName}
+              </h3>
 
-            {/* Price */}
-            <div className="mt-1">
-              <span className="text-[13px] font-bold text-primary">
-                <Price
-                  value={currentPrice}
-                  currencyCode={product.currencyCode}
+              {/* Price */}
+              <div className="mt-1">
+                <span className="text-[13px] font-bold text-primary">
+                  <Price
+                    value={currentPrice}
+                    currencyCode={product.currencyCode}
+                  />
+                </span>
+              </div>
+            </Link>
+
+            {/* Description with WhatsApp anchored to the end of the second line */}
+            <div className="relative mt-2 min-h-11 min-w-0">
+              {descriptionText ? (
+                <Link href={productHref} className="block">
+                  <p className="min-w-0 line-clamp-2 overflow-hidden text-sm leading-[18px] text-[#6b7280]">
+                    {descriptionText}
+                  </p>
+                </Link>
+              ) : null}
+              <div className="pointer-events-none absolute right-0 bottom-0 flex h-7 items-center bg-gradient-to-l from-white via-white to-transparent pl-3">
+                <WhatsAppButton
+                  productSlug={product.slug}
+                  compact
+                  label={t("whatsappAskIn")}
+                  className="pointer-events-auto h-7 shrink-0 gap-1 rounded-full border-0 bg-[#f3f4f6] px-2 text-[11px] font-semibold text-black shadow-none hover:bg-[#e5e7eb] dark:bg-muted dark:text-foreground dark:hover:bg-muted/80"
                 />
-              </span>
+              </div>
             </div>
-
-            {/* Description */}
-            {product.description?.replace(/<[^>]*>/g, "").trim() ? (
-              <p className="mt-2 min-w-0 line-clamp-2 overflow-hidden text-sm leading-[18px] text-[#6b7280]">
-                {product.description?.replace(/<[^>]*>/g, "").trim()} <WhatsAppButton
-                productSlug={product.slug}
-                compact
-                label={t("whatsappAskIn")}
-                className="ml-auto h-7 gap-1 rounded-full border-0 bg-[#f3f4f6] px-2 text-[11px] font-semibold text-black shadow-none hover:bg-[#e5e7eb] dark:bg-muted dark:text-foreground dark:hover:bg-muted/80"
-              />
-              </p>
-            ) : (
-              <div className="" />
-            )}
 
             {/* Bottom row */}
             <div className="mt-auto flex items-center pt-2">
@@ -199,7 +205,7 @@ export function ProductCard({
                 </span>
               )}
             </div>
-          </Link>
+          </div>
 
           {/* Right image */}
           <div className="relative w-[110px] shrink-0">
