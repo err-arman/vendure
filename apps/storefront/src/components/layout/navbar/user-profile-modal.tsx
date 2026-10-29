@@ -42,7 +42,7 @@ export function UserProfileModal({ customer, children }: UserProfileModalProps) 
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<span className="contents">{children}</span>} />
+      <DialogTrigger nativeButton={false} render={<span className="contents">{children}</span>} />
       <DialogContent className="max-w-sm">
         <DialogHeader>
           <DialogTitle>{t("profile")}</DialogTitle>

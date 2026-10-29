@@ -80,9 +80,9 @@ export async function OrderConfirmation({paramsPromise}: OrderConfirmationProps)
                         {t('thankYou')}{' '}
                         <span className="font-semibold text-foreground">{order.code}</span>
                     </p>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    {/* <p className="text-sm text-muted-foreground mt-1">
                         {t('emailConfirmation')}
-                    </p>
+                    </p> */}
                 </div>
 
                 <Card className="mb-6">

@@ -5,17 +5,17 @@ import {toIntlLocale} from '@/i18n/locale-utils';
 
 interface PriceProps {
     value: number;
-    currencyCode?: string;
+    currencyCode?: string | null;
 }
 
-export function Price({value, currencyCode = 'USD'}: PriceProps) {
+export function Price({value, currencyCode}: PriceProps) {
     const locale = useLocale();
     const intlLocale = toIntlLocale(locale);
     return (
         <>
             {new Intl.NumberFormat(intlLocale, {
                 style: 'currency',
-                currency: currencyCode,
+                currency: currencyCode ?? 'USD',
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,
             }).format(value / 100)}

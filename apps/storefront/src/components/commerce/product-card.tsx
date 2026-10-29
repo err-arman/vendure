@@ -9,9 +9,77 @@ import { useTranslations } from "next-intl";
 import { ProductCardAction } from "@/components/commerce/product-card-action";
 import { WhatsAppButton } from "@/components/commerce/whatsapp-button";
 
+type PriceWithTax =
+  | { __typename: "PriceRange"; min?: number | null; max?: number | null }
+  | { __typename: "SinglePrice"; value?: number | null }
+  | null
+  | undefined;
+
 interface ProductCardProps {
   product: FragmentOf<typeof ProductCardFragment> | null | undefined;
   collectionSlug?: string;
+}
+
+function ProductCardPrice({
+  priceWithTax,
+  currencyCode,
+  showFrom = false,
+}: {
+  priceWithTax: PriceWithTax;
+  currencyCode?: string | null;
+  showFrom?: boolean;
+}) {
+  const t = useTranslations("Product");
+
+  if (priceWithTax?.__typename === "PriceRange") {
+    if (showFrom && priceWithTax.min !== priceWithTax.max) {
+      return (
+        <>
+          <span className="mr-1 text-xs font-normal text-white/70">
+            {t("from")}
+          </span>
+
+          <Price value={priceWithTax.min ?? 0} currencyCode={currencyCode} />
+        </>
+      );
+    }
+
+    return <Price value={priceWithTax.min ?? 0} currencyCode={currencyCode} />;
+  }
+
+  if (priceWithTax?.__typename === "SinglePrice") {
+    return <Price value={priceWithTax.value ?? 0} currencyCode={currencyCode} />;
+  }
+
+  return null;
+}
+
+function CardImage({
+  imageSrc,
+  imageAlt,
+  sizes,
+  imageClassName,
+  placeholderClassName,
+}: {
+  imageSrc?: string | null;
+  imageAlt?: string | null;
+  sizes: string;
+  imageClassName?: string;
+  placeholderClassName: string;
+}) {
+  const t = useTranslations("Product");
+
+  return imageSrc ? (
+    <Image
+      src={imageSrc}
+      alt={imageAlt ?? ""}
+      fill
+      sizes={sizes}
+      className={imageClassName}
+    />
+  ) : (
+    <div className={placeholderClassName}>{t("noImage")}</div>
+  );
 }
 
 export function ProductCard({
@@ -27,46 +95,11 @@ export function ProductCard({
     return null;
   }
 
-  const priceWithTax = product.priceWithTax;
-
   const productHref = collectionSlug
     ? `/product/${product.slug}?collection=${collectionSlug}`
     : `/product/${product.slug}`;
 
-  const currentPrice =
-    priceWithTax?.__typename === "PriceRange"
-      ? (priceWithTax.min ?? 0)
-      : priceWithTax?.__typename === "SinglePrice"
-        ? (priceWithTax.value ?? 0)
-        : 0;
-
   const descriptionText = product.description?.replace(/<[^>]*>/g, "").trim();
-
-  const desktopPriceLabel =
-    priceWithTax?.__typename === "PriceRange" ? (
-      priceWithTax.min !== priceWithTax.max ? (
-        <>
-          <span className="mr-1 text-xs font-normal text-white/70">
-            {t("from")}
-          </span>
-
-          <Price
-            value={priceWithTax.min ?? 0}
-            currencyCode={product.currencyCode}
-          />
-        </>
-      ) : (
-        <Price
-          value={priceWithTax.min ?? 0}
-          currencyCode={product.currencyCode}
-        />
-      )
-    ) : priceWithTax?.__typename === "SinglePrice" ? (
-      <Price
-        value={priceWithTax.value ?? 0}
-        currencyCode={product.currencyCode}
-      />
-    ) : null;
 
   return (
     <div className="relative w-full">
@@ -91,24 +124,22 @@ export function ProductCard({
 
               {/* Image */}
               <div className="relative aspect-square overflow-hidden">
-                {product.productAsset ? (
-                  <Image
-                    src={product.productAsset.preview}
-                    alt={product.productName}
-                    fill
-                    sizes="(max-width: 1024px) 33vw, 400px"
-                    className="object-contain p-8 transition-transform duration-500"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
-                    {t("noImage")}
-                  </div>
-                )}
+                <CardImage
+                  imageSrc={product.productAsset?.preview}
+                  imageAlt={product.productName}
+                  sizes="(max-width: 1024px) 33vw, 400px"
+                  imageClassName="object-contain p-8 transition-transform duration-500"
+                  placeholderClassName="flex h-full w-full items-center justify-center text-sm text-muted-foreground"
+                />
 
                 {/* Desktop price badge */}
                 <div className="absolute bottom-4 right-4">
                   <div className="relative inline-flex min-h-[34px] items-center rounded-r-lg bg-[#555B46] px-4 py-2 text-sm font-bold text-white">
-                    {desktopPriceLabel}
+                    <ProductCardPrice
+                      priceWithTax={product.priceWithTax}
+                      currencyCode={product.currencyCode}
+                      showFrom
+                    />
 
                     <div
                       className="absolute left-[-14px] top-0 h-0 w-0"
@@ -149,14 +180,14 @@ export function ProductCard({
                     : "bg-[#D9E4DD] text-black hover:bg-[#C0C8B6]"
               }`
             }
-            iconClassName={`h-4 w-4 ${product.inStock ? "text-white" : ""}`}
+            iconClassName="h-4 w-4"
           />
         </div>
       </div>
 
       {/* =========================================================
-    MOBILE
-    ========================================================= */}
+          MOBILE
+          ========================================================= */}
       <div className="block md:hidden">
         <div className="flex w-full rounded-2xl border border-[#e5e7eb] bg-white p-3">
           {/* Left content */}
@@ -170,8 +201,8 @@ export function ProductCard({
               {/* Price */}
               <div className="mt-1">
                 <span className="text-[13px] font-bold text-primary">
-                  <Price
-                    value={currentPrice}
+                  <ProductCardPrice
+                    priceWithTax={product.priceWithTax}
                     currencyCode={product.currencyCode}
                   />
                 </span>
@@ -187,14 +218,6 @@ export function ProductCard({
                   </p>
                 </Link>
               ) : null}
-              {/* <div className="pointer-events-none absolute right-0 bottom-0 flex h-7 items-center bg-gradient-to-l from-white via-white to-transparent pl-3">
-                <WhatsAppButton
-                  productSlug={product.slug}
-                  compact
-                  label={t("whatsappAskIn")}
-                  className="pointer-events-auto h-7 shrink-0 gap-1 rounded-full border-0 bg-[#f3f4f6] px-2 text-[11px] font-semibold text-black shadow-none hover:bg-[#e5e7eb] dark:bg-muted dark:text-foreground dark:hover:bg-muted/80"
-                />
-              </div> */}
             </div>
 
             {/* Bottom row */}
@@ -211,19 +234,13 @@ export function ProductCard({
           <div className="relative w-[110px] shrink-0 self-start">
             <Link href={productHref} className="block">
               <div className="relative aspect-square overflow-hidden rounded-xl bg-[#f3f4f6]">
-                {product.productAsset ? (
-                  <Image
-                    src={product.productAsset.preview}
-                    alt={product.productName}
-                    fill
-                    sizes="110px"
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">
-                    {t("noImage")}
-                  </div>
-                )}
+                <CardImage
+                  imageSrc={product.productAsset?.preview}
+                  imageAlt={product.productName}
+                  sizes="110px"
+                  imageClassName="object-cover"
+                  placeholderClassName="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground"
+                />
               </div>
             </Link>
             {/* Action buttons — half over the image bottom edge */}
