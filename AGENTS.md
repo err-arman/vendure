@@ -37,3 +37,11 @@ This project was generated with `@vendure/create`.
 
 - Do NOT run `npm run build` (or any slow/full build) without first asking the user for explicit permission.
 - Ask before every build; do not build by default after changes.
+- Narrow checks (targeted test, file-level typecheck, lint on changed files) may be run without asking when a skill needs proof.
+
+## Agent Workflow
+
+- Apply the `ds-*` skills in `.agents/skills` to every task here; `ds-mode` is the default working style.
+- Pick skills per `ds-help`: `ds-plan-loop` for multi-step work, `ds-verify-loop`/`ds-tdd` for changes, `ds-review-loop` before reporting non-trivial diffs, `ds-unstick` after two failed fixes.
+- Use `ds-ledger` or `PROGRESS.md` for long runs, and `ds-unslop` for prose, docs, and commit messages.
+- Evidence before done: paste the command and its output. Label claims as measured, inferred, or guessed.

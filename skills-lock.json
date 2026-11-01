@@ -1,0 +1,179 @@
+{
+  "version": 1,
+  "skills": {
+    "ds-adopt": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-adopt/SKILL.md",
+      "computedHash": "331169465e28d24cba2a708c75f658ce768071679559c2d64adc1ab64fc7a5d7"
+    },
+    "ds-best-of-n": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-best-of-n/SKILL.md",
+      "computedHash": "e19276317cde951a40b0a9ba0e9ccae4633547f71fe121c8d5aedcb27238de05"
+    },
+    "ds-blast-radius": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-blast-radius/SKILL.md",
+      "computedHash": "0d5e10225872932fb8566f1c3f5f32dc7d295db43bb6b25e97b0c1d2a13f7823"
+    },
+    "ds-blueprint": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-blueprint/SKILL.md",
+      "computedHash": "8cb480fac0513036b328fe521debc371947d402ede1608e0e982ea4c7ef1faec"
+    },
+    "ds-catchup": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-catchup/SKILL.md",
+      "computedHash": "795882503a7f7b0da64da0b4859d484ae1d8e23113a04d50966aa85706703ca9"
+    },
+    "ds-context-reset": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-context-reset/SKILL.md",
+      "computedHash": "be101a1ca060b8e032cddbbe1fbb66f1a20c0f15ac64bc443e72db97f0326a44"
+    },
+    "ds-design": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-design/SKILL.md",
+      "computedHash": "5335fdc8682d640f0994e3f1892d799775cc3e23d19e0b03b2fe6e6450236e7d"
+    },
+    "ds-design-audit": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-design-audit/SKILL.md",
+      "computedHash": "ffa316c260aaaa158b7a7c1d8078853b8246af52710d979ac62e7fb041513b17"
+    },
+    "ds-explain": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-explain/SKILL.md",
+      "computedHash": "47f09193eb8895e9179ab2317de75f37ef94f0a833989a2388b653dfaf48793b"
+    },
+    "ds-help": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-help/SKILL.md",
+      "computedHash": "d663756d225b0fbbd0b06df138970bc541829bb204e789d5ff697f29838fead0"
+    },
+    "ds-jury": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-jury/SKILL.md",
+      "computedHash": "90657f059c74168681c0dc78966f610bd60fd41fd593fad123188877b7368dd0"
+    },
+    "ds-ledger": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-ledger/SKILL.md",
+      "computedHash": "fc005862d83f327d7f3f5685190b25b4c75fdcaa3d921d05b9b029ecdeda8e33"
+    },
+    "ds-lessons": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-lessons/SKILL.md",
+      "computedHash": "48cc4961aea563e6273d9093bd53a1267719bd4302c36de26ea458d95bc62638"
+    },
+    "ds-mode": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-mode/SKILL.md",
+      "computedHash": "b90898103cfbc50b343d411f01ade450544f975bb8a366370571c415807c4de9"
+    },
+    "ds-plan-loop": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-plan-loop/SKILL.md",
+      "computedHash": "a4f1fa85d8d64b0021845c42ca9e435312f4019548045c1ecf8e9154d8ba3aca"
+    },
+    "ds-pr": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-pr/SKILL.md",
+      "computedHash": "4978a753e10bf6eae412d9e2ef7b25ed3f559cbcfe20a0a5c645c4f4121cbb47"
+    },
+    "ds-pr-comments": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-pr-comments/SKILL.md",
+      "computedHash": "6250cffd5a741baf731d9249c56f414db06b6513ae29c77130e6e6a16e2fbb44"
+    },
+    "ds-principles": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-principles/SKILL.md",
+      "computedHash": "ddba8d8ef9625eb9f148605c09f82ef84bc750d6e632fbf086b1ba00459d6a4d"
+    },
+    "ds-ready": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-ready/SKILL.md",
+      "computedHash": "f23d437c7c01380d745a71e274a8fc8a9a5a84cfec5aaf553341b7f91234701e"
+    },
+    "ds-review-loop": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-review-loop/SKILL.md",
+      "computedHash": "e03c1378a400ba12241585418c6ee8b6b113b9237dad940053b5799b87e9db4a"
+    },
+    "ds-revive": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-revive/SKILL.md",
+      "computedHash": "e570670b1baf679445defb86b0871890f1dd1c45be3baed76272b7e2b2274f74"
+    },
+    "ds-sharpen": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-sharpen/SKILL.md",
+      "computedHash": "2bd4e3b2bec6f0590e7da0d8123ee94392f3dab391d1393a0645c7d516783b96"
+    },
+    "ds-ship": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-ship/SKILL.md",
+      "computedHash": "902d1024cbb674683cf17e59e4eda31b63e4ead4c84f7b228daa8b503272c21c"
+    },
+    "ds-swarm": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-swarm/SKILL.md",
+      "computedHash": "fa50a1b0f5606315ea34a8bd333705179765bcb2865fa3b6db492596eb855165"
+    },
+    "ds-tdd": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-tdd/SKILL.md",
+      "computedHash": "78e2bcc68e9c752f615b8085e0028f9de44564a315cfc88a3571e1f5b5853193"
+    },
+    "ds-unslop": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-unslop/SKILL.md",
+      "computedHash": "d3fff1e92ec765c9eadc9ec65177e4c41c1eeab3f5be214d1c6419adc1344fd4"
+    },
+    "ds-unstick": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-unstick/SKILL.md",
+      "computedHash": "fa1c36e2099be4316fe29397dbce05713d86a5851e46af999a59dfb7c6b7462d"
+    },
+    "ds-verify-loop": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-verify-loop/SKILL.md",
+      "computedHash": "3404fa9a5441e96f12b7eaac1a34844a5235ef8fb299299252368de5acc84583"
+    },
+    "ds-watch-pr": {
+      "source": "aicodeking/deepseek-stack",
+      "sourceType": "github",
+      "skillPath": "skills/ds-watch-pr/SKILL.md",
+      "computedHash": "71edf2e6091649b7e064535136f7a6704c4cd5b2cd34be99da06529bff3c8857"
+    }
+  }
+}
