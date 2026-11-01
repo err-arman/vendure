@@ -15,6 +15,7 @@ import {ArrowRightIcon} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Price} from '@/components/commerce/price';
 import {OrderStatusBadge} from '@/components/commerce/order-status-badge';
+import {readOrderStatus} from '@/lib/order-status';
 import {formatDate} from '@/lib/format';
 import { Link, redirect } from '@/i18n/navigation';
 import {getRouteLocale} from '@/i18n/server';
@@ -82,7 +83,7 @@ export default async function OrdersPage(props: PageProps<'/[locale]/account/ord
                             >
                                 <div className="flex items-center justify-between mb-3">
                                     <span className="font-semibold">#{order.code}</span>
-                                    <OrderStatusBadge state={order.state}/>
+                                            <OrderStatusBadge state={order.state} orderStatus={readOrderStatus(order.customFields)}/>
                                 </div>
                                 <div className="flex items-center justify-between text-sm">
                                     <span className="text-muted-foreground">{formatDate(order.createdAt, 'short', locale)}</span>
@@ -124,7 +125,7 @@ export default async function OrdersPage(props: PageProps<'/[locale]/account/ord
                                             {formatDate(order.createdAt, 'short', locale)}
                                         </TableCell>
                                         <TableCell>
-                                            <OrderStatusBadge state={order.state}/>
+                                    <OrderStatusBadge state={order.state} orderStatus={readOrderStatus(order.customFields)}/>
                                         </TableCell>
                                         <TableCell>
                                             {order.lines.length}{' '}

@@ -3,6 +3,7 @@ import {
   DefaultJobQueuePlugin,
   DefaultSchedulerPlugin,
   DefaultSearchPlugin,
+  LanguageCode,
   VendureConfig,
 } from "@vendure/core";
 import {
@@ -15,6 +16,7 @@ import { DashboardPlugin } from "@vendure/dashboard/plugin";
 import { GraphiqlPlugin } from "@vendure/graphiql-plugin";
 import "dotenv/config";
 import path from "path";
+import { CancelMyOrderPlugin } from "./plugins/cancel-my-order.plugin";
 import { StorefrontRevalidatePlugin } from "./plugins/storefront-revalidate.plugin";
 
 const IS_DEV = process.env.APP_ENV === "dev";
@@ -66,7 +68,84 @@ export const config: VendureConfig = {
   },
   // When adding or altering custom field definitions, the database will
   // need to be updated. See the "Migrations" section in README.md.
-  customFields: {},
+  customFields: {
+    Order: [
+      {
+        name: "orderStatus",
+        type: "string",
+        defaultValue: "PENDING",
+        public: true,
+        label: [
+          { languageCode: LanguageCode.en, value: "Order status" },
+          { languageCode: LanguageCode.de, value: "Bestellstatus" },
+        ],
+        description: [
+          {
+            languageCode: LanguageCode.en,
+            value: "Fulfilment stage shown to the customer.",
+          },
+          {
+            languageCode: LanguageCode.de,
+            value: "Status, den der Kunde sieht.",
+          },
+        ],
+        options: [
+          {
+            value: "PENDING",
+            label: [
+              { languageCode: LanguageCode.en, value: "Pending" },
+              { languageCode: LanguageCode.de, value: "Ausstehend" },
+            ],
+          },
+          {
+            value: "CONFIRMED",
+            label: [
+              { languageCode: LanguageCode.en, value: "Confirmed" },
+              { languageCode: LanguageCode.de, value: "Bestätigt" },
+            ],
+          },
+          {
+            value: "PROCESSING",
+            label: [
+              { languageCode: LanguageCode.en, value: "Processing" },
+              { languageCode: LanguageCode.de, value: "In Bearbeitung" },
+            ],
+          },
+          {
+            value: "SHIPPING",
+            label: [
+              { languageCode: LanguageCode.en, value: "Shipping" },
+              { languageCode: LanguageCode.de, value: "Versand" },
+            ],
+          },
+          {
+            value: "OUT_FOR_DELIVERY",
+            label: [
+              { languageCode: LanguageCode.en, value: "Out for delivery" },
+              { languageCode: LanguageCode.de, value: "In Zustellung" },
+            ],
+          },
+          {
+            value: "DELIVERED",
+            label: [
+              { languageCode: LanguageCode.en, value: "Delivered" },
+              { languageCode: LanguageCode.de, value: "Zugestellt" },
+            ],
+          },
+          {
+            value: "CANCELLED",
+            label: [
+              { languageCode: LanguageCode.en, value: "Cancelled" },
+              { languageCode: LanguageCode.de, value: "Storniert" },
+            ],
+          },
+        ],
+        ui: {
+          component: "select-form-input",
+        },
+      },
+    ],
+  },
   plugins: [
     GraphiqlPlugin.init(),
     AssetServerPlugin.init({
@@ -105,5 +184,6 @@ export const config: VendureConfig = {
         : path.join(__dirname, "dashboard"),
     }),
     StorefrontRevalidatePlugin,
+    CancelMyOrderPlugin,
   ],
 };

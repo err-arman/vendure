@@ -465,3 +465,16 @@ export const SetCustomerForOrderMutation = graphql(`
     }
   }
 `);
+
+export const CancelMyOrderMutation = graphql(`
+  mutation CancelMyOrder($code: String!) {
+    cancelMyOrder(code: $code) {
+      id
+      code
+      state
+      customFields {
+        orderStatus
+      }
+    }
+  }
+`);

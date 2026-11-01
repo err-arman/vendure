@@ -10,6 +10,8 @@ import Image from 'next/image';
 import {Link} from '@/i18n/navigation';
 import {Price} from '@/components/commerce/price';
 import {OrderStatusBadge} from '@/components/commerce/order-status-badge';
+import {readOrderStatus} from '@/lib/order-status';
+import {CancelOrderButton} from './cancel-order-button';
 import {formatDate} from '@/lib/format';
 import {useLocale, useTranslations} from 'next-intl';
 import type {ResultOf} from '@/graphql';
@@ -35,6 +37,11 @@ export function OrderDetail({orderPromise}: OrderDetailProps) {
         return null;
     }
 
+    const orderStatus = readOrderStatus(order.customFields);
+    const canCancel =
+        (orderStatus === 'PENDING' || orderStatus === 'CONFIRMED') &&
+        order.state !== 'Cancelled';
+
     return (
         <div>
             <div className="mb-6">
@@ -49,7 +56,10 @@ export function OrderDetail({orderPromise}: OrderDetailProps) {
                             {t('placedOn', {date: formatDate(order.createdAt, 'long', locale)})}
                         </p>
                     </div>
-                    <OrderStatusBadge state={order.state}/>
+                    <div className="flex items-center gap-3">
+                        <OrderStatusBadge state={order.state} orderStatus={orderStatus}/>
+                        {canCancel && <CancelOrderButton code={order.code}/>}
+                    </div>
                 </div>
             </div>
 

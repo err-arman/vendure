@@ -5,6 +5,8 @@ import { Link } from '@/i18n/navigation';
 import Image from 'next/image';
 import {Separator} from '@/components/ui/separator';
 import {Price} from '@/components/commerce/price';
+import {OrderStatusBadge} from '@/components/commerce/order-status-badge';
+import {readOrderStatus} from '@/lib/order-status';
 import {notFound} from 'next/navigation';
 import {getRouteLocale} from '@/i18n/server';
 import {getTranslations} from 'next-intl/server';
@@ -17,6 +19,9 @@ const GetOrderByCodeQuery = graphql(`
             id
             code
             state
+            customFields {
+                orderStatus
+            }
             totalWithTax
             currencyCode
             lines {
@@ -80,6 +85,12 @@ export async function OrderConfirmation({paramsPromise}: OrderConfirmationProps)
                         {t('thankYou')}{' '}
                         <span className="font-semibold text-foreground">{order.code}</span>
                     </p>
+                    <div className="mt-4 flex justify-center">
+                        <OrderStatusBadge
+                            state={order.state}
+                            orderStatus={readOrderStatus(order.customFields)}
+                        />
+                    </div>
                     {/* <p className="text-sm text-muted-foreground mt-1">
                         {t('emailConfirmation')}
                     </p> */}

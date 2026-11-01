@@ -342,6 +342,9 @@ export const GetCustomerOrdersQuery = graphql(`
                     id
                     code
                     state
+                    customFields {
+                        orderStatus
+                    }
                     totalWithTax
                     currencyCode
                     createdAt
@@ -373,6 +376,9 @@ export const GetOrderDetailQuery = graphql(`
             id
             code
             state
+            customFields {
+                orderStatus
+            }
             active
             createdAt
             updatedAt
