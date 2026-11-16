@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FragmentOf, ResultOf, readFragment } from "@/graphql";
 import { ProductCard } from "@/components/commerce/product-card";
 import { CollectionTabs, type CollectionTab } from "@/components/commerce/collection-tabs";
@@ -14,6 +14,7 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import { Image as ImageIcon, Search } from "lucide-react";
 import { Price } from "@/components/commerce/price";
 import type { SearchSuggestion } from "@/components/commerce/search-controls";
+import { ALL_ROASTS, RoastFilter } from "@/components/commerce/roast-filter";
 
 const SUGGESTION_ENDPOINT = "/api/search";
 const SUGGESTION_LIMIT = 6;
@@ -25,15 +26,25 @@ function getProductName(item: SearchItem): string {
   return readFragment(ProductCardFragment, item as ProductCardData).productName;
 }
 
+function getFacetValueIds(item: SearchItem): readonly string[] {
+  return readFragment(ProductCardFragment, item as ProductCardData).facetValueIds;
+}
+
 interface Section {
   id: string;
   name: string;
   items: SearchItem[];
 }
 
+export interface RoastFacet {
+  name: string;
+  values: Array<{ id: string; name: string }>;
+}
+
 interface CollectionProductSectionsProps {
   sections: Section[];
   pageSize: number;
+  roastFacet?: RoastFacet;
 }
 
 function ProductSection({
@@ -45,6 +56,11 @@ function ProductSection({
   const t = useTranslations("Product");
   const [visibleCount, setVisibleCount] = useState(pageSize);
   const sentinelRef = useRef<HTMLDivElement>(null);
+
+  // A new filter result must start its progressive reveal from the top.
+  useEffect(() => {
+    setVisibleCount(pageSize);
+  }, [items, pageSize]);
 
   const hasMore = visibleCount < items.length;
   const visibleItems = items.slice(0, visibleCount);
@@ -103,14 +119,22 @@ function ProductSection({
 export function CollectionProductSections({
   sections,
   pageSize,
+  roastFacet,
 }: CollectionProductSectionsProps) {
   const t = useTranslations("Product");
   const [query, setQuery] = useState("");
+  const [selectedRoast, setSelectedRoast] = useState<string>(ALL_ROASTS);
   const [activeId, setActiveId] = useState(() => sections[0]?.id ?? "");
-  const collections: CollectionTab[] = sections.map((s) => ({
-    id: s.id,
-    name: s.name,
-  }));
+
+  // Drop a selection whose facet value disappeared from the catalog.
+  useEffect(() => {
+    if (
+      selectedRoast !== ALL_ROASTS &&
+      !roastFacet?.values.some((value) => value.id === selectedRoast)
+    ) {
+      setSelectedRoast(ALL_ROASTS);
+    }
+  }, [roastFacet, selectedRoast]);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -224,30 +248,51 @@ export function CollectionProductSections({
     suggestionsOpen && query.trim().length >= 2 && !suggestionsLoading;
 
   const normalizedQuery = query.trim().toLowerCase();
-  const filteredSections = normalizedQuery
-    ? sections
-        .map((s) => ({
-          ...s,
-          items: s.items.filter((item) =>
-            getProductName(item).toLowerCase().includes(normalizedQuery),
-          ),
+
+  const filteredSections = useMemo(
+    () =>
+      sections
+        .map((section) => ({
+          ...section,
+          items: section.items.filter((item) => {
+            if (
+              normalizedQuery &&
+              !getProductName(item).toLowerCase().includes(normalizedQuery)
+            ) {
+              return false;
+            }
+            if (selectedRoast === ALL_ROASTS) return true;
+            return getFacetValueIds(item).includes(selectedRoast);
+          }),
         }))
-        .filter((s) => s.items.length > 0)
-    : sections;
+        .filter((section) => section.items.length > 0),
+    [sections, normalizedQuery, selectedRoast],
+  );
+
+  const collections = useMemo<CollectionTab[]>(
+    () =>
+      filteredSections.map((section) => ({
+        id: section.id,
+        name: section.name,
+      })),
+    [filteredSections],
+  );
 
   // Scrollspy suppression: while a tab-triggered smooth scroll is in progress
   // the active tab should stay on the clicked collection until the scroll
   // actually settles, so intermediate sections never steal the selection.
   const spyRef = useRef(false);
 
-  // Keep the selection aligned with the section list: default to the first
+  // Keep the selection aligned with the visible sections: default to the first
   // collection and never leave activeId pointing at a tab that doesn't exist.
   useEffect(() => {
-    if (sections.length === 0) return;
+    if (filteredSections.length === 0) return;
     setActiveId((current) =>
-      sections.some((s) => s.id === current) ? current : sections[0].id,
+      filteredSections.some((s) => s.id === current)
+        ? current
+        : filteredSections[0].id,
     );
-  }, [sections]);
+  }, [filteredSections]);
 
   // Deterministically compute which section covers the scroll-spy trigger
   // line from the current scroll position. Unlike IntersectionObserver entry
@@ -255,15 +300,15 @@ export function CollectionProductSections({
   // underline can never go blank.
   const getActiveSectionId = useCallback(() => {
     const spyLine = window.innerHeight * 0.35;
-    let current = sections[0]?.id ?? "";
-    for (const section of sections) {
+    let current = filteredSections[0]?.id ?? "";
+    for (const section of filteredSections) {
       const el = document.getElementById(section.id);
       if (el && el.getBoundingClientRect().top <= spyLine) {
         current = section.id;
       }
     }
     return current;
-  }, [sections]);
+  }, [filteredSections]);
 
   // Highlight the section currently in view while the user scrolls.
   useEffect(() => {
@@ -278,7 +323,7 @@ export function CollectionProductSections({
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleScroll);
     };
-  }, [getActiveSectionId, sections]);
+  }, [getActiveSectionId]);
 
   const scrollToSection = useCallback(
     (id: string) => {
@@ -336,22 +381,38 @@ export function CollectionProductSections({
         containerRef={searchContainerRef}
         content={
           <>
-            <SearchInput
-              query={query}
-              onQueryChange={setQuery}
-              onSubmit={handleSubmit}
-              searchInputProps={{
-                onKeyDown: handleSearchKeyDown,
-                onFocus: () => {
-                  if (query.trim().length >= 2) setSuggestionsOpen(true);
-                },
-              }}
-            />
-            <CollectionTabs
-              collections={collections}
-              activeId={activeId}
-              onSelect={scrollToSection}
-            />
+            <div className="flex items-center gap-2">
+              <div className="min-w-0 flex-1">
+                <SearchInput
+                  query={query}
+                  onQueryChange={setQuery}
+                  onSubmit={handleSubmit}
+                  searchInputProps={{
+                    onKeyDown: handleSearchKeyDown,
+                    onFocus: () => {
+                      if (query.trim().length >= 2) setSuggestionsOpen(true);
+                    },
+                  }}
+                />
+              </div>
+              {roastFacet && roastFacet.values.length > 0 && (
+                <RoastFilter
+                  options={roastFacet.values}
+                  value={selectedRoast}
+                  onChange={(value) => {
+                    setSelectedRoast(value);
+                    setSuggestionsOpen(false);
+                  }}
+                />
+              )}
+            </div>
+            {collections.length > 0 && (
+              <CollectionTabs
+                collections={collections}
+                activeId={activeId}
+                onSelect={scrollToSection}
+              />
+            )}
           </>
         }
         popover={
@@ -426,15 +487,21 @@ export function CollectionProductSections({
     />
 
       <div className={tabsStuck ? "pb-20" : ""}>
-        {filteredSections.map((section) => (
-          <ProductSection
-            key={section.id}
-            id={section.id}
-            name={section.name}
-            items={section.items}
-            pageSize={pageSize}
-          />
-        ))}
+        {filteredSections.length === 0 ? (
+          <p className="py-16 text-center text-muted-foreground">
+            {t("noProductsFound")}
+          </p>
+        ) : (
+          filteredSections.map((section) => (
+            <ProductSection
+              key={section.id}
+              id={section.id}
+              name={section.name}
+              items={section.items}
+              pageSize={pageSize}
+            />
+          ))
+        )}
       </div>
 
       <StickyCartBar show={tabsStuck} />

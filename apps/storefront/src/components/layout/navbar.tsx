@@ -26,10 +26,10 @@ export function Navbar() {
                 <Suspense>
                   <CurrencyPickerWrapper />
                 </Suspense>
-                <Suspense>
-                  <ThemeSwitcher />
-                </Suspense>
               </div>
+              <Suspense>
+                <ThemeSwitcher />
+              </Suspense>
               <Suspense>
                 <NavbarCart />
               </Suspense>

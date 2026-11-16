@@ -25,11 +25,11 @@ export function StickySearchBar({
   return (
     <div
       ref={containerRef}
-      className={`sticky z-30 space-y-3 bg-background/95 py-2 shadow-sm shadow-stone-950/[0.04] backdrop-blur-xl transition-all duration-300 ${
+      className={`sticky z-40 space-y-3 bg-background/95 py-2 shadow-sm shadow-stone-950/[0.04] backdrop-blur-xl transition-all duration-300 ${
         navbarHidden ? "top-0" : "top-20"
       }`}
     >
-      <div className="mx-auto w-full max-w-7xl space-y-3 px-3 sm:px-4 lg:px-8">
+      <div className="mx-auto w-full max-w-7xl space-y-3">
         {content}
       </div>
       {popover}

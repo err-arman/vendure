@@ -13,6 +13,23 @@ export const GetTopCollectionsQuery = graphql(`
     }
 `);
 
+export const GetFacetsQuery = graphql(`
+    query GetFacets {
+        facets {
+            items {
+                id
+                code
+                name
+                values {
+                    id
+                    code
+                    name
+                }
+            }
+        }
+    }
+`);
+
 export const GetActiveCustomerQuery = graphql(`
     query GetActiveCustomer {
         activeCustomer {

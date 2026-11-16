@@ -40,13 +40,19 @@ export function ProductCard({
         ? (priceWithTax.value ?? 0)
         : 0;
 
+  // Variants with different prices make this a range, so the card has to say
+  // "From" — otherwise the lowest price looks like the only price.
+  const hasPriceRange =
+    priceWithTax?.__typename === "PriceRange" &&
+    priceWithTax.min !== priceWithTax.max;
+
   const descriptionText = product.description?.replace(/<[^>]*>/g, "").trim();
 
   const desktopPriceLabel =
     priceWithTax?.__typename === "PriceRange" ? (
-      priceWithTax.min !== priceWithTax.max ? (
+      hasPriceRange ? (
         <>
-          <span className="mr-1 text-xs font-normal text-white/70">
+          <span className="mr-1.5 text-sm font-semibold text-white">
             {t("from")}
           </span>
 
@@ -131,7 +137,7 @@ export function ProductCard({
             productSlug={product.slug}
             compact
             label={t("whatsappAskIn")}
-            className="absolute right-3 top-1 z-30 h-7 gap-1 rounded-full border-0 bg-[#D9E4DD] px-2 text-[11px] font-semibold text-black shadow-none hover:bg-[#C0C8B6] dark:bg-muted dark:text-foreground dark:hover:bg-muted/80"
+            className="absolute right-3 top-1 z-30 h-10 w-10 rounded-full border-0 bg-[#D9E4DD] p-0 shadow-none hover:bg-[#C0C8B6] dark:bg-white/15 dark:hover:bg-white/25"
           />
 
           {/* Desktop cart button */}
@@ -149,7 +155,7 @@ export function ProductCard({
                     : "bg-[#D9E4DD] text-black hover:bg-[#C0C8B6]"
               }`
             }
-            iconClassName={`h-4 w-4 ${product.inStock ? "text-white" : ""}`}
+            iconClassName="h-4 w-4"
           />
         </div>
       </div>
@@ -170,6 +176,11 @@ export function ProductCard({
               {/* Price */}
               <div className="mt-1">
                 <span className="text-[13px] font-bold text-primary">
+                  {hasPriceRange && (
+                    <span className="mr-1 text-sm font-semibold text-primary">
+                      {t("from")}
+                    </span>
+                  )}
                   <Price
                     value={currentPrice}
                     currencyCode={product.currencyCode}

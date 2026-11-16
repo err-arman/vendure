@@ -7,6 +7,7 @@ export const ProductCardFragment = graphql(`
         slug
         description
         inStock
+        facetValueIds
         productAsset {
             id
             preview

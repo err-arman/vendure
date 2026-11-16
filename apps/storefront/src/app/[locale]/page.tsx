@@ -10,11 +10,21 @@ import { getTranslations } from "next-intl/server";
 import { toOgLocale } from "@/i18n/locale-utils";
 import { query } from "@/lib/vendure/api";
 import {
+  GetFacetsQuery,
   GetTopCollectionsQuery,
   SearchProductsQuery,
 } from "@/lib/vendure/queries";
 
 const PAGE_SIZE = 10;
+
+const ROAST_FACET_CODES = ["roast", "roast-level", "roast-levels"];
+
+function isRoastFacet(facet: { code: string; name: string }) {
+  const keys = [facet.code, facet.name].map((value) =>
+    value.trim().toLowerCase().replace(/[\s_]+/g, "-"),
+  );
+  return keys.some((key) => ROAST_FACET_CODES.includes(key));
+}
 
 function searchInput(collectionSlug: string) {
   return {
@@ -30,11 +40,18 @@ async function HomeProducts() {
   const locale = await getRouteLocale();
   const currencyCode = await getActiveCurrencyCode();
 
-  const collectionsResult = await query(GetTopCollectionsQuery, undefined, {
-    languageCode: locale,
-    currencyCode,
-  });
+  const [collectionsResult, facetsResult] = await Promise.all([
+    query(GetTopCollectionsQuery, undefined, {
+      languageCode: locale,
+      currencyCode,
+    }),
+    query(GetFacetsQuery, undefined, { languageCode: locale }),
+  ]);
   const collections = collectionsResult.data.collections.items;
+
+  // The Roast dropdown is driven by the catalog facet, so it only appears
+  // once a Roast facet with values exists in Vendure.
+  const roastFacet = facetsResult.data.facets.items.find(isRoastFacet);
 
   // Fetch all products for every collection in parallel.
   const allSections = await Promise.all(
@@ -56,7 +73,21 @@ async function HomeProducts() {
       id="products"
       className="mx-auto max-w-7xl px-3 pb-20 pt-6 sm:px-4 lg:px-8"
     >
-      <CollectionProductSections sections={sections} pageSize={PAGE_SIZE} />
+      <CollectionProductSections
+        sections={sections}
+        pageSize={PAGE_SIZE}
+        roastFacet={
+          roastFacet
+            ? {
+                name: roastFacet.name,
+                values: roastFacet.values.map(({ id, name }) => ({
+                  id,
+                  name,
+                })),
+              }
+            : undefined
+        }
+      />
     </section>
   );
 }

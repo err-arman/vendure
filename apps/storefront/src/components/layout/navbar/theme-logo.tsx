@@ -7,7 +7,7 @@ export function ThemeLogo() {
       alt="The Coffee Store"
       width={966}
       height={266}
-      className="h-12 w-auto"
+      className="h-10 w-auto sm:h-12"
     />
   );
 }
