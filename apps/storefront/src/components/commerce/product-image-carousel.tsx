@@ -40,7 +40,7 @@ export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
                     src={images[currentIndex].source}
                     alt={`Product image ${currentIndex + 1}`}
                     fill
-                    className="object-cover hover:scale-105 transition-transform duration-500"
+                    className="object-contain hover:scale-105 transition-transform duration-500"
                     sizes="(max-width: 1024px) 100vw, 50vw"
                     priority={currentIndex === 0}
                 />
@@ -92,7 +92,7 @@ export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
                                 src={image.preview}
                                 alt={`Thumbnail ${index + 1}`}
                                 fill
-                                className="object-cover"
+                                className="object-contain"
                                 sizes="25vw"
                             />
                         </button>

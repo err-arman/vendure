@@ -228,7 +228,7 @@ export function ProductCard({
                     alt={product.productName}
                     fill
                     sizes="110px"
-                    className="object-cover"
+                    className="object-contain"
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">
