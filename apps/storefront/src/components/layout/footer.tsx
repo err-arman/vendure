@@ -43,7 +43,7 @@ export async function Footer() {
               className="hover:text-foreground transition-colors"
             >
               <Image
-                src="/ecbr-logo.png"
+                src="/east-bengal-coffee-roasters-badge.png"
                 alt="East Bengal Coffee Roasters"
                 width={88}
                 height={100}

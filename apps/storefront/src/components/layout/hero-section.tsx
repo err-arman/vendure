@@ -85,7 +85,7 @@ export function HeroSection() {
 
       <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
         <img
-          src="/ecbr-logo.png"
+          src="/east-bengal-coffee-roasters-badge.png"
           alt="East Bengal Coffee Roasters"
           className="w-36 h-auto object-contain drop-shadow-2xl md:w-44 lg:w-60"
         />

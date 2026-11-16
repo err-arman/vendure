@@ -45,11 +45,11 @@ export function MobileNav({collections, isLoggedIn}: MobileNavProps) {
                 <SheetHeader>
                     <SheetClose render={<Link href="/" />} nativeButton={false} onClick={handleLinkClick}>
                         <Image
-                            src="/ecbr-logo.png"
-                            alt="East Bengal Coffee Roasters"
-                            width={88}
-                            height={100}
-                            className="h-12 w-auto"
+                            src="/the-coffee-store-logo.png"
+                            alt="The Coffee Store"
+                            width={966}
+                            height={266}
+                            className="h-10 w-auto"
                         />
                     </SheetClose>
                     <SheetTitle className="sr-only">{t('menu')}</SheetTitle>
