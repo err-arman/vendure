@@ -5,6 +5,8 @@ import { getNavbarHidden, subscribeNavbarHidden } from "@/lib/navbar-scroll";
 
 interface StickySearchBarProps {
   containerRef?: React.RefObject<HTMLDivElement | null>;
+  /* Ref for the inner column (search + tabs), measured separately from the popover. */
+  contentRef?: React.RefObject<HTMLDivElement | null>;
   /* Content rendered inside the centered max-width column (SearchInput, CollectionTabs). */
   content: React.ReactNode;
   /* Optional suggestion popover, rendered as a direct child of the sticky shell so it can anchor below the whole bar. */
@@ -13,6 +15,7 @@ interface StickySearchBarProps {
 
 export function StickySearchBar({
   containerRef,
+  contentRef,
   content,
   popover,
 }: StickySearchBarProps) {
@@ -29,7 +32,7 @@ export function StickySearchBar({
         navbarHidden ? "top-0" : "top-20"
       }`}
     >
-      <div className="mx-auto w-full max-w-7xl space-y-3">
+      <div ref={contentRef} className="mx-auto w-full max-w-7xl space-y-3">
         {content}
       </div>
       {popover}

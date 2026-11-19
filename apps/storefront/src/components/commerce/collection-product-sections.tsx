@@ -52,7 +52,8 @@ function ProductSection({
   name,
   items,
   pageSize,
-}: Section & { pageSize: number }) {
+  scrollOffset,
+}: Section & { pageSize: number; scrollOffset: number }) {
   const t = useTranslations("Product");
   const [visibleCount, setVisibleCount] = useState(pageSize);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -83,7 +84,7 @@ function ProductSection({
   }, [hasMore, pageSize, items.length]);
 
   return (
-    <section id={id} className="scroll-mt-36 pt-10">
+    <section id={id} className="pt-10" style={{ scrollMarginTop: scrollOffset }}>
       <h2 className="mb-4 text-xl font-semibold tracking-tight text-foreground">
         {name}
       </h2>
@@ -363,6 +364,25 @@ export function CollectionProductSections({
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [tabsStuck, setTabsStuck] = useState(false);
 
+  // The sticky bar grows when the tabs wrap onto more rows, so anchor section
+  // scrolling to the measured height of the search/tabs column (excluding the
+  // suggestion popover) instead of a fixed scroll margin.
+  const stickyContentRef = useRef<HTMLDivElement>(null);
+  const [stickyOffset, setStickyOffset] = useState(144);
+
+  useEffect(() => {
+    const bar = stickyContentRef.current;
+    if (!bar) return;
+
+    // 8px vertical padding on both sides of the bar, plus 8px breathing room.
+    const update = () => setStickyOffset(bar.getBoundingClientRect().height + 24);
+    update();
+
+    const observer = new ResizeObserver(update);
+    observer.observe(bar);
+    return () => observer.disconnect();
+  }, []);
+
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
@@ -379,6 +399,7 @@ export function CollectionProductSections({
       <div ref={sentinelRef} className="h-px w-full" aria-hidden />
       <StickySearchBar
         containerRef={searchContainerRef}
+        contentRef={stickyContentRef}
         content={
           <>
             <div className="flex items-center gap-2">
@@ -410,7 +431,10 @@ export function CollectionProductSections({
               <CollectionTabs
                 collections={collections}
                 activeId={activeId}
-                onSelect={scrollToSection}
+                onSelect={(id) => {
+                  setSuggestionsOpen(false);
+                  scrollToSection(id);
+                }}
               />
             )}
           </>
@@ -499,6 +523,7 @@ export function CollectionProductSections({
               name={section.name}
               items={section.items}
               pageSize={pageSize}
+              scrollOffset={stickyOffset}
             />
           ))
         )}
